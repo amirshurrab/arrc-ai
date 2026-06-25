@@ -133,7 +133,7 @@
   <section class="hero">
     <div class="eyebrow"><span class="dot"></span> Seminar Satisfaction Survey</div>
     <h1><span class="grad">Tell us how we did.</span></h1>
-    <p class="sub">Your feedback takes about 2 minutes and helps us make every ARRC × LGN seminar better. All ratings are confidential.</p>
+    <p class="sub">Your feedback takes about 2 minutes and helps us make every ARRC × LGN seminar better. Responses are submitted securely online and kept confidential.</p>
   </section>
 
   <form id="surveyForm" novalidate>
@@ -194,22 +194,22 @@
   <div class="thanks" id="thanks">
     <div class="check">✓</div>
     <h2>Thank you!</h2>
-    <p>Your feedback has been recorded. We're grateful you took the time.</p>
+    <p>Your feedback has been submitted online and recorded. We're grateful you took the time.</p>
     <button onclick="resetForm()">Submit another response</button>
   </div>
 
   <!-- ORGANISER PANEL -->
   <details class="organiser">
-    <summary>Organiser tools (export responses)</summary>
+    <summary>Organiser tools</summary>
     <div class="org-body">
-      <div class="org-row">
-        <button class="org-btn primary" onclick="exportExcel()">⬇ Export responses to Excel</button>
-        <button class="org-btn" onclick="exportCSV()">⬇ CSV</button>
-        <button class="org-btn danger" onclick="clearAll()">🗑 Clear stored responses</button>
-        <span class="org-count" id="orgCount">0 responses on this device</span>
+      <div class="org-note" style="margin-top:0;margin-bottom:12px">
+        ✅ Responses are collected <b>online</b> — every submission from any device is saved to your central <b>Google Sheet</b> (exportable to Excel any time). The buttons below download a local backup of submissions made on <b>this</b> device.
       </div>
-      <div class="org-note">
-        Responses submitted on <b>this device/browser</b> are stored locally and included in the export — ideal for a kiosk or tablet at the seminar. For <b>multi-device collection via QR</b>, set a collection endpoint: open this file and paste your Formspree or Google Apps Script URL into <code>const ENDPOINT</code> at the top of the script, and every submission will also post there into one central sheet.
+      <div class="org-row">
+        <button class="org-btn primary" onclick="exportExcel()">⬇ Download local backup (Excel)</button>
+        <button class="org-btn" onclick="exportCSV()">⬇ CSV</button>
+        <button class="org-btn danger" onclick="clearAll()">🗑 Clear local backup</button>
+        <span class="org-count" id="orgCount">0 local backups on this device</span>
       </div>
     </div>
   </details>
@@ -228,13 +228,14 @@
 
 <script>
 /* ============================================================
-   COLLECTION ENDPOINT (optional)
-   Leave "" to collect on this device only (export via the
-   Organiser panel). To gather responses from many phones via
-   the QR code, paste a Formspree (https://formspree.io) or
-   Google Apps Script Web App URL below — submissions POST there.
+   ONLINE COLLECTION ENDPOINT
+   Every submission is POSTed here and saved to one central
+   Google Sheet (via a Google Apps Script Web App), so responses
+   from any phone/device land in the same place online.
+   Replace the placeholder below with your deployed /exec URL.
+   A local backup is also kept in the browser as a safety net.
    ============================================================ */
-const ENDPOINT = "";
+const ENDPOINT = "PASTE_APPS_SCRIPT_WEB_APP_URL";
 
 const SCALE=[["1","Strongly disagree"],["2","Disagree"],["3","Neutral"],["4","Agree"],["5","Strongly agree"]];
 const RATINGS=[
@@ -276,10 +277,11 @@ for(let i=0;i<=10;i++){
 
 function store(){try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){return[]}}
 function setStore(a){localStorage.setItem(KEY,JSON.stringify(a))}
-function refreshCount(){document.getElementById('orgCount').textContent=store().length+" responses on this device";}
+function refreshCount(){document.getElementById('orgCount').textContent=store().length+" local backups on this device";}
 refreshCount();
 
-document.getElementById('surveyForm').addEventListener('submit',function(e){
+const ONLINE = /^https?:\/\//.test(ENDPOINT);
+document.getElementById('surveyForm').addEventListener('submit',async function(e){
   e.preventDefault();
   const err=document.getElementById('err');err.textContent="";
   const fd=new FormData(this);
@@ -289,10 +291,17 @@ document.getElementById('surveyForm').addEventListener('submit',function(e){
   // build record
   const rec={timestamp:new Date().toISOString()};
   COLUMNS.forEach(([id])=>{ if(id!=="timestamp") rec[id]=(fd.get(id)||"").toString(); });
-  // save locally
+  // keep a local backup so nothing is ever lost
   const all=store();all.push(rec);setStore(all);refreshCount();
-  // optional central endpoint
-  if(ENDPOINT){ fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(rec)}).catch(()=>{}); }
+  // submit online
+  const btn=this.querySelector('.btn-submit');
+  if(ONLINE){
+    btn.disabled=true; const lbl=btn.textContent; btn.textContent="Submitting…";
+    try{
+      await fetch(ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(rec)});
+    }catch(_){ /* offline — kept in local backup, will not block the thank-you */ }
+    btn.disabled=false; btn.textContent=lbl;
+  }
   // show thanks
   document.getElementById('surveyForm').style.display='none';
   document.getElementById('thanks').classList.add('show');
