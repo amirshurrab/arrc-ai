@@ -43,6 +43,10 @@
   .block{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px 22px 8px;margin-bottom:18px}
   .block-title{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--teal2);font-weight:700;margin:0 0 4px}
   .block-sub{font-size:13px;color:var(--muted2);margin:0 0 16px}
+  .sess{display:flex;flex-direction:column;gap:11px;padding:4px 0 6px}
+  .sess-row{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
+  .sess-k{flex:0 0 96px;font-size:11.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted2);font-weight:700}
+  .sess-v{font-size:15.5px;color:var(--ink);font-weight:600}
   .field{margin-bottom:18px}
   .field > label{display:block;font-size:14.5px;font-weight:600;margin-bottom:9px}
   .field .req{color:var(--teal2)}
@@ -140,13 +144,15 @@
     <!-- About -->
     <div class="block">
       <div class="block-title">About the session</div>
-      <div class="block-sub">Help us connect your feedback to the right seminar.</div>
-      <div class="field"><label>Seminar / course title <span class="req">*</span></label>
-        <input type="text" name="seminar_title" placeholder="e.g. AI Strategy for C-Suite" /></div>
-      <div class="field"><label>Date attended</label>
-        <input type="date" name="date_attended" /></div>
-      <div class="field"><label>Presenter / trainer</label>
-        <input type="text" name="presenter" placeholder="Presenter name (optional)" /></div>
+      <div class="block-sub">You're sharing feedback on this session:</div>
+      <div class="sess">
+        <div class="sess-row"><span class="sess-k">Session</span><span class="sess-v">Executive Overview of AI For Management</span></div>
+        <div class="sess-row"><span class="sess-k">Date</span><span class="sess-v">25 June 2026</span></div>
+        <div class="sess-row"><span class="sess-k">Presenters</span><span class="sess-v">Dr. Mohammed Bahja &amp; Dr. Amir Shurrab</span></div>
+      </div>
+      <input type="hidden" name="seminar_title" value="Executive Overview of AI For Management" />
+      <input type="hidden" name="date_attended" value="2026-06-25" />
+      <input type="hidden" name="presenter" value="Dr. Mohammed Bahja & Dr. Amir Shurrab" />
     </div>
 
     <!-- Ratings -->
@@ -184,7 +190,7 @@
       <div class="block-sub">Leave blank to stay anonymous. We only use this to follow up if you'd like us to.</div>
       <div class="field"><label>Full name</label><input type="text" name="name" placeholder="Optional" /></div>
       <div class="field"><label>Email</label><input type="email" name="email" placeholder="Optional" /></div>
-      <div class="field"><label>Organisation / entity</label><input type="text" name="organisation" placeholder="Optional" /></div>
+      <div class="field"><label>Department</label><input type="text" name="organisation" placeholder="Your department (optional)" /></div>
     </div>
 
     <div class="submit-row"><button type="submit" class="btn-submit">Submit feedback</button></div>
@@ -254,7 +260,7 @@ const COLUMNS=[
   ...RATINGS.map(([id,q])=>[id,q]),
   ["nps_recommend","Recommend (0-10)"],
   ["most_valuable","Most valuable"],["improve","Could improve"],["future_topics","Future topics"],
-  ["name","Name"],["email","Email"],["organisation","Organisation"]
+  ["name","Name"],["email","Email"],["organisation","Department"]
 ];
 const KEY="arrc_lgn_survey_responses";
 
