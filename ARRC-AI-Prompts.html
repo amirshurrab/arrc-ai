@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ARRC · Pro Prompt Library — Claude · Gamma · NotebookLM</title>
+<style>
+  :root{
+    --bg:#0a1418;--bg2:#0f1c21;--panel:#13232a;--panel2:#1a2e36;--line:#27424b;
+    --ink:#eef3f8;--muted:#9fb0c0;--muted2:#6f8195;
+    --gold:#00a9b0;--gold2:#5fe0d6;--teal:#3fb6a8;--blue:#5b8def;--violet:#a98ce0;--green:#5fbf8a;
+    --radius:16px;--shadow:0 18px 50px rgba(0,0,0,.45);
+    --mono:"SF Mono",ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:radial-gradient(1200px 700px at 78% -12%,#16202b 0%,var(--bg) 55%);
+    color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+  a{color:inherit}
+
+  header.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);
+    background:rgba(11,15,20,.72);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:1040px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:.5px}
+  .logo{width:38px;height:38px;border-radius:9px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--gold),#0a6e73);color:#0b0f14;font-weight:800;font-size:15px}
+  .home-link{font-size:13.5px;color:var(--muted);text-decoration:none}
+  .home-link:hover{color:var(--gold2)}
+
+  .hero{padding:60px 0 18px;text-align:center}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;letter-spacing:2.5px;
+    text-transform:uppercase;color:var(--gold2);border:1px solid var(--line);
+    background:var(--panel);padding:7px 16px;border-radius:999px;margin-bottom:22px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal)}
+  h1{font-size:clamp(30px,4.6vw,50px);line-height:1.06;margin:0 0 16px;letter-spacing:-1px;font-weight:800}
+  h1 .grad{background:linear-gradient(120deg,#fff 8%,var(--gold2) 52%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{font-size:clamp(15px,1.9vw,19px);color:var(--muted);max-width:680px;margin:0 auto 6px}
+  .sub b{color:#fff}
+
+  .legend{display:inline-flex;align-items:center;gap:9px;background:var(--panel);border:1px solid var(--line);
+    border-radius:12px;padding:11px 16px;margin-top:24px;font-size:13.5px;color:var(--muted)}
+  .legend code{font-family:var(--mono);background:var(--panel2);color:var(--gold2);padding:1px 7px;border-radius:6px;font-size:12.5px}
+
+  .tabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:34px 0 8px;position:sticky;top:66px;z-index:30;
+    background:rgba(11,15,20,.82);backdrop-filter:blur(8px);padding:12px 0}
+  .tab{cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--muted);
+    font-family:inherit;font-size:14px;font-weight:600;padding:11px 18px;border-radius:11px;transition:all .16s;display:inline-flex;align-items:center;gap:8px}
+  .tab:hover{color:var(--ink);border-color:var(--gold)}
+  .tab.active{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#0b0f14;border-color:transparent}
+
+  .group{display:none;animation:fade .35s ease}.group.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .group-intro{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin:12px 0 22px}
+  .group-intro h2{margin:0 0 6px;font-size:20px}
+  .group-intro p{margin:0;font-size:14.5px;color:var(--muted)}
+  .group-intro .how{margin-top:12px;font-size:13.5px;color:var(--ink);background:rgba(63,182,168,.07);border-left:2px solid var(--teal);padding:9px 13px;border-radius:8px}
+  .group-intro .how b{color:var(--teal)}
+
+  .prompt{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 18px 16px;margin-bottom:18px}
+  .p-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .p-title{font-size:16px;font-weight:700}
+  .p-use{font-size:12.5px;color:var(--teal);font-weight:600;margin-top:2px}
+  .copy-btn{cursor:pointer;border:1px solid var(--line);background:var(--panel2);color:var(--muted);
+    font-family:inherit;font-size:12.5px;font-weight:600;padding:8px 14px;border-radius:9px;transition:all .16s;white-space:nowrap;flex:0 0 auto}
+  .copy-btn:hover{border-color:var(--gold);color:var(--gold2)}
+  .copy-btn.done{background:rgba(95,191,138,.15);border-color:var(--green);color:var(--green)}
+  .p-body{position:relative;background:#0d1218;border:1px solid var(--line);border-radius:11px;
+    padding:15px 16px;font-family:var(--mono);font-size:13px;color:#d6e2ee;white-space:pre-wrap;line-height:1.6}
+  .ph{color:var(--gold2);font-weight:600}
+
+  footer{border-top:1px solid var(--line);padding:30px 0 50px;text-align:center;color:var(--muted2);font-size:13px;margin-top:40px}
+  .disc{max-width:760px;margin:16px auto 0;font-size:12px;color:var(--muted2);line-height:1.5}
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(40px);
+    background:var(--green);color:#06140c;font-weight:700;font-size:13.5px;padding:11px 22px;border-radius:11px;box-shadow:var(--shadow);opacity:0;transition:all .3s;z-index:99}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.brand-logo{height:26px;width:auto;display:block;flex:0 0 auto}.cobrand{display:flex;align-items:center;justify-content:center;gap:16px;margin:10px 0 12px;flex-wrap:wrap}.cobrand .cb-arrc{height:22px;opacity:.9}.cobrand .cb-x{font-size:12px;color:var(--muted2);letter-spacing:.5px}.lgn-chip{background:#fff;border-radius:10px;padding:7px 12px;display:inline-flex}.lgn-chip img{height:36px;display:block}.brand-sep{color:var(--muted2);font-weight:300;font-size:18px;margin:0 4px}.lgn-hdr{background:#fff;border-radius:7px;padding:4px 8px;display:inline-flex;align-items:center}.lgn-hdr img{height:28px;display:block}</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-in">
+    <div class="brand"><img class="brand-logo" src="arrc-logo.svg" alt="ARRC" /><span class="brand-sep">|</span><span class="lgn-hdr"><img src="https://londongulfnexus.com/wp-content/uploads/2025/05/London-Gulf-Nexus-Logo-transparent.png" alt="London Gulf Nexus" /></span></div>
+    <a class="home-link" href="ARRC-AI-Hub.html">← All ARRC AI pages</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow"><span class="dot"></span> Copy-ready prompts, tuned for ARRC</div>
+    <h1><span class="grad">Professional prompts<br/>your team can use today.</span></h1>
+    <p class="sub">Battle-ready prompt templates for the three highest-leverage tools — <b>Claude</b> for agentic delivery, <b>Gamma</b> for decks, <b>NotebookLM</b> for grounded research. Copy, paste, swap the placeholders, go.</p>
+    <div class="legend">💡 Replace anything in <code>[BRACKETS]</code> with your project specifics before running.</div>
+  </section>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-g="claude">🟣 Claude · Agentic workflows</button>
+    <button class="tab" data-g="gamma">🟪 Gamma · Presentations</button>
+    <button class="tab" data-g="notebook">📓 NotebookLM · Research</button>
+  </div>
+
+  <!-- CLAUDE -->
+  <div class="group active" id="claude">
+    <div class="group-intro">
+      <h2>Claude — delegate a whole workflow</h2>
+      <p>These are delegation briefs, not one-line prompts. Give Claude the goal, the steps, and the guardrails — then let it work. Each ends with a human approval gate before anything leaves the building.</p>
+      <div class="how">🛠️ <b>Best in an agentic setup</b> (e.g. Cowork / Claude with tools &amp; connectors) so Claude can actually read files, search, and produce .docx/.pptx/.xlsx — but they work in a normal chat too if you paste the documents in.</div>
+    </div>
+    <div id="claudeList"></div>
+  </div>
+
+  <!-- GAMMA -->
+  <div class="group" id="gamma">
+    <div class="group-intro">
+      <h2>Gamma — generate a polished deck from a prompt</h2>
+      <p>Paste one of these into Gamma's "Generate" box. Be specific about audience, structure, slide count and design — Gamma rewards detail.</p>
+      <div class="how">🎨 <b>After it generates:</b> refine in Gamma's editor. If you need PowerPoint, export then fix brand fonts/spacing — and remember Gamma's Arabic-script handling is weaker, so review RTL slides.</div>
+    </div>
+    <div id="gammaList"></div>
+  </div>
+
+  <!-- NOTEBOOKLM -->
+  <div class="group" id="notebook">
+    <div class="group-intro">
+      <h2>NotebookLM — ask questions grounded in your own sources</h2>
+      <p>NotebookLM only answers from documents you upload, and cites the exact passage — so it won't invent facts. Upload your RFP, regulations, reports or interview transcripts first, then run these.</p>
+      <div class="how">📂 <b>Upload first:</b> the project's regulations, RFP, prior reports, and interview transcripts (Arabic or English). Then ask. Mind client-confidentiality rules on what you upload.</div>
+    </div>
+    <div id="notebookList"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="brand" style="justify-content:center;margin-bottom:8px"><img class="brand-logo" src="arrc-logo.svg" alt="ARRC" /> · Prompt Library</div>
+  <a class="home-link" href="ARRC-AI-Hub.html">← Back to the ARRC AI hub</a>
+  <div class="disc">
+    Prompt templates for ARRC's use. AI output is a first draft — a qualified consultant must review, verify facts and citations, and authorise any client-facing deliverable or external action. Do not paste confidential or classified material into consumer-tier tools; use enterprise plans with data agreements and Saudi-hosted options where data residency is required.
+  </div>
+<div class="cobrand"><img class="cb-arrc" src="arrc-logo.svg" alt="ARRC" /><span class="cb-x">in partnership with</span><span class="lgn-chip"><img src="https://londongulfnexus.com/wp-content/uploads/2025/05/London-Gulf-Nexus-Logo-transparent.png" alt="London Gulf Nexus" /></span></div></footer>
+
+<div class="toast" id="toast">Copied ✓</div>
+
+<script>
+const CLAUDE=[
+  {t:"Government RFP → bid decision & proposal skeleton",use:"Bid / tender response",
+   p:`You are my bid manager at a consulting firm serving government entities.
+I'll attach a government RFP for [ISSUING ENTITY]. Work end to end and pause before any external send:
+
+1. Read the full RFP (Arabic or English). Extract every mandatory requirement, submission rule and evaluation criterion into a compliance matrix:
+   requirement | mandatory? | how we meet it | owner | evidence gap.
+2. Research [ISSUING ENTITY]'s mandate, recent programs and strategic priorities from public sources, and cite them.
+3. Give a clear BID / NO-BID recommendation with a confidence score and the 3 biggest risks.
+4. Draft a proposal outline mapped section-by-section to the evaluation criteria, with 3 win themes tailored to this client.
+5. List 5 clarification questions to send the client.
+
+Deliver as a structured document I can review. Flag anything that could disqualify us. Do not send or post anything — stop and show me first.`},
+  {t:"Raw workstream updates → steering-committee report",use:"PMO / SteerCo",
+   p:`Act as my PMO analyst. I'll give you raw updates from [N] transformation workstreams (mixed Arabic/English, bullet fragments, emails, chat).
+
+Produce a steering-committee report:
+- Overall RAG status with a one-line rationale.
+- A table: workstream | RAG | one-line status | change since last period.
+- Top 3 risks (with likelihood and impact) and the decisions you need from the committee.
+- 3 recommended next steps, each with an owner.
+
+Reconcile contradictions and tell me where data is missing rather than guessing. Output as a clean brief I can drop into a deck.`},
+  {t:"Regulations & contracts → traceable obligations register",use:"Document intelligence",
+   p:`You are a regulatory analyst. I'll attach a set of regulations and contracts for [CLIENT / SECTOR], in Arabic and English.
+
+1. Build an obligations register: obligation | source document & clause | responsible party | deadline | risk if missed.
+2. Group obligations by theme, and flag any that conflict or overlap across documents.
+3. Surface the 10 highest-risk or most time-sensitive obligations.
+
+Keep every row traceable to its exact source clause. Ask me before assuming anything ambiguous — do not fill gaps with guesses.`},
+  {t:"Parallel international benchmark with verified sources",use:"Research / benchmarking",
+   p:`Run a benchmark for me. Research how these countries structure their [TARGET INSTITUTION, e.g. national housing regulator]: [COUNTRY A], [COUNTRY B], [COUNTRY C], [COUNTRY D].
+
+For each country, cover: mandate, governance model, funding model, and 2 lessons relevant to [CLIENT].
+Verify every claim against an official source and cite it. Flag anything you could only partially confirm.
+Then synthesise a comparison table and a one-page briefing with 3 recommendations for [CLIENT].`},
+  {t:"Approved proposal → full delivery kit",use:"Proposal → delivery",
+   p:`This proposal for [CLIENT / PROGRAM] was just approved (attached). Turn it into a delivery kit using our standard structure:
+
+1. A milestone project plan with phases, key deliverables and dependencies.
+2. A RACI across the workstreams and roles.
+3. An initial risk log: risk | likelihood | impact | owner | mitigation.
+4. A kickoff-deck outline (slide titles + 3 bullets each).
+
+State any assumptions you made and list exactly where you need my input before this is client-ready.`}
+];
+
+const GAMMA=[
+  {t:"Executive transformation pitch deck",use:"Client pitch",
+   p:`Create a 12-slide executive presentation for a government client on [PROGRAM / TRANSFORMATION].
+Audience: senior government leadership. Tone: authoritative, concise, outcomes-focused.
+
+Structure: 1) Context & mandate  2) The challenge  3) Our understanding  4) Proposed approach (phased roadmap)  5) Operating & governance model  6) Expected outcomes & KPIs  7) Why [FIRM]  8) Risks & mitigations  9) Timeline  10) Investment & value  11) Next steps  12) Contact.
+
+Design: clean, modern, corporate; navy-and-gold palette. Keep ~3 concise bullets per slide and suggest a relevant chart or diagram for each.`},
+  {t:"Steering-committee status update",use:"SteerCo deck",
+   p:`Generate a 9-slide steering-committee update for [PROGRAM].
+Include: executive summary with overall RAG status; progress by workstream; key achievements this period; risks & issues with mitigations; decisions needed from the committee; upcoming milestones; appendix.
+
+Layout: professional and data-friendly, with room for a RAG status table and a timeline. Minimal text, board-ready, corporate palette.`},
+  {t:"Firm capability / credentials statement",use:"Business development",
+   p:`Create a 10-slide capability statement for [FIRM], a consulting firm serving government entities across [SECTORS, e.g. health, justice, housing, defense].
+Cover: who we are; what sets us apart; service lines; industries served; selected engagements and measurable impact; our delivery approach; team & global partnerships; clients; contact.
+
+Design: premium, trustworthy and understated, suitable for a senior government audience. Strong visual hierarchy, light on text.`}
+];
+
+const NOTEBOOK=[
+  {t:"Build a cross-document obligations table",use:"Compliance",
+   p:`Across all uploaded documents, extract every obligation, deadline and responsible party into a single table. For each row, cite the source document and page. Note any obligations that appear to conflict between documents.`},
+  {t:"Synthesise stakeholder interviews into themes",use:"Research synthesis",
+   p:`These are stakeholder interview transcripts for [CLIENT]. Summarise them into the top 5 themes. For each theme give: the share of interviewees who raised it, two representative quotes with citations, and the implication for the target operating model.`},
+  {t:"Compare sources and surface contradictions",use:"Due diligence",
+   p:`Compare what the uploaded documents say about [TOPIC, e.g. governance roles and decision rights]. Where do they agree, and where do they contradict or leave gaps? Cite each source for every point.`},
+  {t:"Onboard a new consultant in an hour",use:"Knowledge transfer",
+   p:`Create a briefing document and a study guide from these sources for a new consultant joining the [CLIENT] project, so they can get up to speed in about an hour. Cover the mandate, key stakeholders, current status, and the most important documents to read first.`},
+  {t:"Generate a pre-meeting audio overview",use:"Prep on the go",
+   p:`Generate an Audio Overview of these documents that I can listen to before my meeting with [CLIENT], focusing on [the operating-model decisions / the open risks]. Keep it to the essentials a partner needs to walk in informed.`}
+];
+
+function highlight(s){return escapeHtml(s).replace(/\[([^\]]+)\]/g,'<span class="ph">[$1]</span>');}
+function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function build(listId,data){
+  const wrap=document.getElementById(listId);
+  data.forEach(item=>{
+    const d=document.createElement('div');d.className='prompt';
+    d.innerHTML=`
+      <div class="p-head">
+        <div><div class="p-title">${item.t}</div><div class="p-use">${item.use}</div></div>
+        <button class="copy-btn" data-copy="${encodeURIComponent(item.p)}">⧉ Copy prompt</button>
+      </div>
+      <div class="p-body">${highlight(item.p)}</div>`;
+    wrap.appendChild(d);
+  });
+}
+build('claudeList',CLAUDE);
+build('gammaList',GAMMA);
+build('notebookList',NOTEBOOK);
+
+document.getElementById('tabs').addEventListener('click',e=>{
+  const b=e.target.closest('.tab');if(!b)return;
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.group').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  document.getElementById(b.dataset.g).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+document.addEventListener('click',e=>{
+  const c=e.target.closest('.copy-btn');if(!c)return;
+  const text=decodeURIComponent(c.dataset.copy);
+  navigator.clipboard.writeText(text).then(()=>{
+    const old=c.innerHTML;c.innerHTML='✓ Copied';c.classList.add('done');showToast();
+    setTimeout(()=>{c.innerHTML=old;c.classList.remove('done')},1600);
+  }).catch(()=>showToast('Press ⌘/Ctrl+C'));
+});
+let toastT;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg||'Prompt copied ✓';
+  t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),1700);}
+</script>
+</body>
+</html>

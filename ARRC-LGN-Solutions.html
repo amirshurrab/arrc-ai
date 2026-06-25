@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ARRC × LGN — AI Learning Solutions</title>
+<style>
+  :root{
+    --bg:#0a1418;--bg2:#0f1c21;--panel:#13232a;--panel2:#1a2e36;--line:#27424b;
+    --ink:#eef6f7;--muted:#9fb8bd;--muted2:#6f9098;
+    --teal:#00a9b0;--teal2:#5fe0d6;--teald:#21656d;--lime:#afcb36;
+    --blue:#5b8def;--violet:#a98ce0;--green:#5fbf8a;--amber:#e0a93f;
+    --radius:16px;--shadow:0 18px 50px rgba(0,0,0,.5);
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:radial-gradient(1100px 650px at 78% -10%,#10262b 0%,var(--bg) 55%);
+    color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  a{color:inherit}
+
+  header.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);
+    background:rgba(10,20,24,.74);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;padding:13px 24px;max-width:1120px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:700;letter-spacing:.5px}
+  .brand-logo{height:26px;width:auto;display:block}
+  .brand .sep{color:var(--muted2);font-weight:400;font-size:14px}
+  .home-link{font-size:13.5px;color:var(--muted);text-decoration:none}.home-link:hover{color:var(--teal2)}
+
+  .hero{padding:56px 0 16px;text-align:center}
+  .lgn-hero-logo{background:#fff;border-radius:18px;padding:18px 26px;display:inline-flex;box-shadow:var(--shadow);margin-bottom:26px}
+  .lgn-hero-logo img{height:92px;display:block}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;letter-spacing:2.5px;
+    text-transform:uppercase;color:var(--teal2);border:1px solid var(--line);background:var(--panel);padding:7px 16px;border-radius:999px;margin-bottom:22px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal)}
+  h1{font-size:clamp(30px,4.8vw,50px);line-height:1.06;margin:0 0 16px;letter-spacing:-1px;font-weight:800}
+  h1 .grad{background:linear-gradient(120deg,#fff 8%,var(--teal2) 52%,var(--teal));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{font-size:clamp(15px,1.9vw,19px);color:var(--muted);max-width:720px;margin:0 auto}
+  .sub b{color:#fff}
+
+  /* about strip */
+  .about{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:40px 0 6px}
+  @media(max-width:760px){.about{grid-template-columns:1fr 1fr}}
+  .fact{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;text-align:center}
+  .fact .n{font-size:20px;font-weight:800;color:var(--teal2);letter-spacing:-.3px}
+  .fact .l{font-size:12.5px;color:var(--muted);margin-top:5px}
+
+  section{padding:44px 0 8px}
+  .sec-head{max-width:760px;margin:0 auto 30px;text-align:center}
+  .kicker{font-size:12.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--lime);font-weight:700}
+  .sec-head h2{font-size:clamp(24px,3.2vw,34px);margin:12px 0 10px;letter-spacing:-.4px}
+  .sec-head p{color:var(--muted);font-size:15.5px;margin:0}
+
+  .sol-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+  @media(max-width:760px){.sol-grid{grid-template-columns:1fr}}
+  .sol{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;position:relative;overflow:hidden;transition:transform .16s,border-color .2s}
+  .sol:hover{transform:translateY(-3px);border-color:var(--teal)}
+  .sol .glow{position:absolute;top:-40px;right:-40px;width:120px;height:120px;border-radius:50%;filter:blur(45px);opacity:.18;background:var(--teal)}
+  .sol-top{display:flex;align-items:center;gap:13px;margin-bottom:8px}
+  .sol-ic{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;font-size:23px;flex:0 0 46px;
+    background:linear-gradient(135deg,rgba(0,169,176,.18),rgba(95,224,214,.06));border:1px solid var(--line)}
+  .sol h3{margin:0;font-size:18px}
+  .sol .serves{font-size:11.5px;color:var(--lime);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+  .sol p{font-size:13.8px;color:var(--muted);margin:10px 0 12px}
+  .sol .why{font-size:13px;color:var(--ink);background:rgba(0,169,176,.07);border-left:2px solid var(--teal);padding:9px 12px;border-radius:8px}
+  .sol .why b{color:var(--teal2)}
+
+  .fit{background:linear-gradient(135deg,rgba(0,169,176,.1),rgba(175,203,54,.05));border:1px solid var(--line);
+    border-radius:18px;padding:26px;margin:34px 0 8px}
+  .fit h3{margin:0 0 8px;font-size:20px}
+  .fit p{margin:0 0 10px;color:var(--muted);font-size:14.5px}
+  .fit p:last-child{margin-bottom:0}
+  .fit b{color:var(--teal2)}
+
+  .assume{display:flex;gap:12px;align-items:flex-start;background:rgba(224,169,63,.07);border:1px solid rgba(224,169,63,.25);
+    border-radius:var(--radius);padding:16px 20px;margin-top:20px;font-size:13.5px;color:#f0dcb0}
+  .assume b{color:#ffe9c2}
+
+  footer{border-top:1px solid var(--line);padding:30px 0 50px;text-align:center;color:var(--muted2);font-size:13px;margin-top:34px}
+  .cobrand{display:flex;align-items:center;justify-content:center;gap:16px;margin:6px 0 12px;flex-wrap:wrap}
+  .cobrand .cb-arrc{height:24px;opacity:.92}
+  .cobrand .cb-x{font-size:12px;color:var(--muted2);letter-spacing:.5px}
+  .lgn-chip{background:#fff;border-radius:10px;padding:7px 12px;display:inline-flex}
+  .lgn-chip img{height:36px;display:block}
+  .disc{max-width:780px;margin:14px auto 0;font-size:12px;color:var(--muted2);line-height:1.5}
+  .home-link2{color:var(--muted);text-decoration:none}.home-link2:hover{color:var(--teal2)}
+.brand-sep{color:var(--muted2);font-weight:300;font-size:18px;margin:0 4px}.lgn-hdr{background:#fff;border-radius:7px;padding:4px 8px;display:inline-flex;align-items:center}.lgn-hdr img{height:28px;display:block}</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-in">
+    <div class="brand"><img class="brand-logo" src="arrc-logo.svg" alt="ARRC" /><span class="brand-sep">|</span><span class="lgn-hdr"><img src="https://londongulfnexus.com/wp-content/uploads/2025/05/London-Gulf-Nexus-Logo-transparent.png" alt="London Gulf Nexus" /></span></div>
+    <a class="home-link" href="ARRC-AI-Hub.html">← All ARRC AI pages</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="lgn-hero-logo"><img src="https://londongulfnexus.com/wp-content/uploads/2025/05/London-Gulf-Nexus-Logo-transparent.png" alt="London Gulf Nexus" /></div>
+    <div class="eyebrow"><span class="dot"></span> ARRC × London Gulf Nexus</div>
+    <h1><span class="grad">AI learning solutions<br/>that build national capability.</span></h1>
+    <p class="sub">London Gulf Nexus (LGN) bridges <b>UK academic excellence</b> with <b>Gulf enterprise innovation</b> — a consortium of 50+ elite professors delivering AI upskilling, the UPGRADEjourney™ methodology, and ISO/IEC 42001-certified responsible AI. Here are five flagship solutions ARRC can bring to its education and human-capital clients.</p>
+
+    <div class="about">
+      <div class="fact"><div class="n">50+</div><div class="l">Elite UK professors</div></div>
+      <div class="fact"><div class="n">UPGRADEjourney™</div><div class="l">Flagship methodology</div></div>
+      <div class="fact"><div class="n">ISO/IEC 42001</div><div class="l">Responsible-AI certified</div></div>
+      <div class="fact"><div class="n">UK + Gulf</div><div class="l">Offices in UK &amp; UAE</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div class="kicker">The LGN solution suite</div>
+      <h2>Five AI products for the learning ecosystem</h2>
+      <p>Each maps to a real need across schools, ministries, training providers and the labour market — and to ARRC's Human Capital &amp; Education practice.</p>
+    </div>
+
+    <div class="sol-grid">
+
+      <div class="sol">
+        <div class="glow"></div>
+        <div class="sol-top"><div class="sol-ic">🧑‍🏫</div><div><h3>AI Teaching Assistant</h3><div class="serves">Teachers · Trainers · Students</div></div></div>
+        <p>An always-on AI tutor and educator aide — lesson planning, instant grading and feedback, and personalised 1:1 tutoring in Arabic and English, grounded in the curriculum.</p>
+        <div class="why"><b>Why it matters:</b> scales high-quality teaching across large cohorts, frees educators from admin, and supports national education-transformation targets.</div>
+      </div>
+
+      <div class="sol">
+        <div class="glow"></div>
+        <div class="sol-top"><div class="sol-ic">🗂️</div><div><h3>Asset Management Systems</h3><div class="serves">Institutions · Ministries</div></div></div>
+        <p>AI-driven management of learning and operational assets — content libraries, devices, licences and facilities — with usage analytics and predictive maintenance.</p>
+        <div class="why"><b>Why it matters:</b> maximises the utilisation and ROI of large education investments and gives decision-makers data for capacity planning.</div>
+      </div>
+
+      <div class="sol">
+        <div class="glow"></div>
+        <div class="sol-top"><div class="sol-ic">🧒</div><div><h3>AI Kids Club</h3><div class="serves">Schools · Families · Youth programs</div></div></div>
+        <p>A safe, gamified AI learning space for children — creativity, coding, languages and AI literacy — with strong guardrails, age-appropriate content and parental controls.</p>
+        <div class="why"><b>Why it matters:</b> builds early AI literacy for the next generation — a visible flagship for national youth-capability ambitions.</div>
+      </div>
+
+      <div class="sol">
+        <div class="glow"></div>
+        <div class="sol-top"><div class="sol-ic">🪪</div><div><h3>AI Passport</h3><div class="serves">Learners · Employers · Regulators</div></div></div>
+        <p>A verifiable digital credential and skills portfolio that records a learner's competencies and AI proficiency — portable and trusted across institutions and employers.</p>
+        <div class="why"><b>Why it matters:</b> links education to the labour market with portable proof of capability — a natural complement to ARRC's labour-market analytics work.</div>
+      </div>
+
+      <div class="sol">
+        <div class="glow"></div>
+        <div class="sol-top"><div class="sol-ic">📚</div><div><h3>AI Course Catalogue</h3><div class="serves">Learners · L&amp;D · Workforce planners</div></div></div>
+        <p>An AI-curated catalogue that recommends personalised learning paths — matched to each learner's goals and to real, current labour-market demand.</p>
+        <div class="why"><b>Why it matters:</b> aligns upskilling with the skills the economy actually needs, turning training spend into measurable workforce outcomes.</div>
+      </div>
+
+      <div class="sol">
+        <div class="glow"></div>
+        <div class="sol-top"><div class="sol-ic">🚀</div><div><h3>UPGRADEjourney™</h3><div class="serves">The methodology underneath</div></div></div>
+        <p>LGN's flagship, trademarked upskilling methodology — engineered to break psychological barriers to technology and build lasting digital confidence and leadership.</p>
+        <div class="why"><b>Why it matters:</b> the proven framework that makes the five solutions stick — adoption and confidence, not just tools.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="fit">
+    <h3>How LGN fits ARRC</h3>
+    <p>ARRC already leads transformation in <b>Education, Labor Market &amp; Vocational Training</b> and <b>Human Capital &amp; Capability Building</b>. LGN gives that practice a ready-made, ISO 42001-certified AI product suite — a joint go-to-market for government education clients across the Kingdom.</p>
+    <p>The combination is powerful: <b>ARRC's local government access and delivery muscle</b> plus <b>LGN's UK academic credibility and AI products</b> — turning advisory engagements into deployable, revenue-generating solutions.</p>
+  </div>
+
+  <div class="assume">⚠️ <div><b>A note on scope.</b> This page frames the five solutions you named within LGN's public positioning (UK–Gulf AI-learning consortium). Some are live LGN offerings and some are proposed concepts — tell me which is which and I'll tighten the descriptions, add real specs, metrics and screenshots, and align exact wording with LGN's official materials.</div></div>
+</div>
+
+<footer>
+  <div class="cobrand">
+    <img class="cb-arrc" src="arrc-logo.svg" alt="ARRC" />
+    <span class="cb-x">in partnership with</span>
+    <span class="lgn-chip"><img src="https://londongulfnexus.com/wp-content/uploads/2025/05/London-Gulf-Nexus-Logo-transparent.png" alt="London Gulf Nexus" /></span>
+  </div>
+  <a class="home-link2" href="ARRC-AI-Hub.html">← Back to the ARRC AI hub</a>
+  <div class="disc">
+    LGN brand assets © London Gulf Nexus; UPGRADEjourney™ is a registered trademark of London Gulf Nexus. This is an internal enablement page for ARRC. Solution descriptions are illustrative and should be verified against official LGN product documentation before client use.
+  </div>
+</footer>
+</body>
+</html>

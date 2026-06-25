@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ARRC × Claude — AI Hub</title>
+<style>
+  :root{
+    --bg:#0a1418;--bg2:#0f1c21;--panel:#13232a;--panel2:#1a2e36;--line:#27424b;
+    --ink:#eef6f7;--muted:#9fb8bd;--muted2:#6f9098;
+    --teal:#00a9b0;--teal2:#5fe0d6;--teald:#21656d;--lime:#afcb36;
+    --blue:#5b8def;--violet:#a98ce0;--green:#5fbf8a;--amber:#e0a93f;
+    --radius:18px;--shadow:0 18px 50px rgba(0,0,0,.5);
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;min-height:100vh;background:radial-gradient(1100px 650px at 50% -8%,#12282e 0%,var(--bg) 55%);
+    color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+  .top{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:700;letter-spacing:.5px}
+  .brand-logo{height:30px;width:auto;display:block}
+  .brand .sep{color:var(--muted2);font-weight:400;font-size:15px}
+  .top .meta{font-size:13px;color:var(--muted2)}
+
+  .hero{text-align:center;padding:42px 0 12px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;letter-spacing:2.5px;
+    text-transform:uppercase;color:var(--teal2);border:1px solid var(--line);background:var(--panel);padding:7px 16px;border-radius:999px;margin-bottom:24px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal);animation:glow 2s infinite}
+  @keyframes glow{50%{opacity:.4}}
+  h1{font-size:clamp(34px,5.4vw,58px);line-height:1.04;margin:0 0 16px;letter-spacing:-1.2px;font-weight:800}
+  h1 .grad{background:linear-gradient(120deg,#fff 8%,var(--teal2) 52%,var(--teal));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{font-size:clamp(16px,2vw,20px);color:var(--muted);max-width:700px;margin:0 auto 6px}
+  .sub b{color:#fff}
+  .flow{font-size:13px;color:var(--muted2);margin-top:18px;font-family:var(--mono)}
+  .flow b{color:var(--teal2)}
+
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:44px 0 20px}
+  @media(max-width:760px){.cards{grid-template-columns:1fr}}
+  .card{position:relative;display:flex;flex-direction:column;text-decoration:none;color:inherit;
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:26px 24px;
+    overflow:hidden;transition:transform .18s,border-color .2s,box-shadow .2s}
+  .card:hover{transform:translateY(-4px);border-color:var(--teal);box-shadow:var(--shadow)}
+  .card::after{content:"Open →";position:absolute;bottom:24px;right:24px;font-size:13px;font-weight:700;color:var(--teal2);
+    opacity:0;transform:translateX(-6px);transition:all .2s}
+  .card:hover::after{opacity:1;transform:none}
+  .glow{position:absolute;top:-40px;right:-40px;width:130px;height:130px;border-radius:50%;filter:blur(42px);opacity:.2}
+  .num{font-family:var(--mono);font-size:12.5px;color:var(--muted2);font-weight:700;letter-spacing:1px}
+  .ic{font-size:30px;margin:10px 0 12px}
+  .card h2{margin:0 0 4px;font-size:21px;letter-spacing:-.3px}
+  .for{font-size:12.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;margin-bottom:12px}
+  .card p{margin:0 0 16px;font-size:14px;color:var(--muted);max-width:92%}
+  .meta-row{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap}
+  .chip{font-size:11px;font-weight:600;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:4px 11px}
+  .ribbon{position:absolute;top:18px;right:18px;font-size:10.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+  .ribbon.flag{background:rgba(0,169,176,.18);color:var(--teal2)}
+  .ribbon.new{background:rgba(175,203,54,.18);color:var(--lime)}
+
+  .c1 .for{color:var(--teal2)} .c1 .glow{background:var(--teal)}
+  .c2 .for{color:var(--green)}  .c2 .glow{background:var(--green)}
+  .c3 .for{color:var(--violet)}.c3 .glow{background:var(--violet)}
+  .c4 .for{color:var(--blue)}  .c4 .glow{background:var(--blue)}
+  .c5 .for{color:var(--amber)} .c5 .glow{background:var(--amber)}
+  .c6 .for{color:var(--lime)}  .c6 .glow{background:var(--lime)}
+
+  .note{background:linear-gradient(135deg,rgba(0,169,176,.1),rgba(175,203,54,.05));border:1px solid var(--line);
+    border-radius:var(--radius);padding:20px 24px;margin:14px 0 8px;font-size:14px;color:var(--muted)}
+  .note b{color:var(--teal2)}
+
+  footer{border-top:1px solid var(--line);padding:30px 0 50px;text-align:center;color:var(--muted2);font-size:13px;margin-top:30px}
+  .cobrand{display:flex;align-items:center;justify-content:center;gap:16px;margin:6px 0 14px;flex-wrap:wrap}
+  .cobrand .cb-arrc{height:26px;opacity:.92}
+  .cobrand .cb-x{font-size:12px;color:var(--muted2);letter-spacing:.5px}
+  .lgn-chip{background:#fff;border-radius:10px;padding:8px 13px;display:inline-flex}
+  .lgn-chip img{height:36px;display:block}
+  .disc{max-width:760px;margin:6px auto 0;font-size:12px;color:var(--muted2);line-height:1.5}
+.brand-sep{color:var(--muted2);font-weight:300;font-size:18px;margin:0 4px}.lgn-hdr{background:#fff;border-radius:7px;padding:4px 8px;display:inline-flex;align-items:center}.lgn-hdr img{height:28px;display:block}
+  .qr-panel{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:24px;margin:20px 0}
+  @media(max-width:620px){.qr-panel{grid-template-columns:1fr;text-align:center}}
+  .qr-card{background:#fff;border-radius:14px;padding:12px;display:inline-flex;justify-self:start}
+  @media(max-width:620px){.qr-card{justify-self:center}}
+  .qr-card img{width:150px;height:150px;display:block}
+  .qr-kick{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal2);font-weight:700}
+  .qr-info h3{margin:8px 0 6px;font-size:20px}
+  .qr-info p{margin:0 0 14px;color:var(--muted);font-size:14px}
+  .qr-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  @media(max-width:620px){.qr-actions{justify-content:center}}
+  .qbtn{cursor:pointer;text-decoration:none;font-family:inherit;font-size:13.5px;font-weight:600;padding:10px 18px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);transition:all .15s;display:inline-flex;align-items:center;gap:7px}
+  .qbtn:hover{border-color:var(--teal);color:var(--teal2)}
+  .qbtn.primary{background:linear-gradient(135deg,var(--teal2),var(--teal));color:#04181a;border-color:transparent}
+  .qr-url{font-family:var(--mono);font-size:12px;color:var(--muted);word-break:break-all;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 11px;display:inline-block}
+  .qr-hint{font-size:11.5px;color:var(--muted2);margin-top:8px}
+  .c7 .for{color:var(--teal2)} .c7 .glow{background:var(--teal)}
+  .qtoast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(40px);background:var(--green);color:#06140c;font-weight:700;font-size:13px;padding:10px 20px;border-radius:10px;opacity:0;transition:all .3s;z-index:99}
+  .qtoast.show{opacity:1;transform:translateX(-50%) translateY(0)}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><img class="brand-logo" src="arrc-logo.svg" alt="ARRC" /><span class="brand-sep">|</span><span class="lgn-hdr"><img src="https://londongulfnexus.com/wp-content/uploads/2025/05/London-Gulf-Nexus-Logo-transparent.png" alt="London Gulf Nexus" /></span></div>
+    <div class="meta">AI enablement hub · June 2026</div>
+  </div>
+
+  <section class="hero">
+    <div class="eyebrow"><span class="dot"></span> One place for everything we built</div>
+    <h1><span class="grad">ARRC's AI hub.</span></h1>
+    <p class="sub">Seven pages, one journey — from <b>seeing what AI can do</b> on ARRC's work, to <b>the agentic shift</b>, to the <b>tools</b>, <b>prompts</b>, <b>roadmap</b>, <b>LGN offering</b> and a <b>live seminar survey</b> your team can act on today.</p>
+    <div class="flow">Suggested flow: <b>Agentic Tour</b> → <b>Capability Demo</b> → <b>Prompts</b> → <b>Toolkit</b> → <b>What's Next</b> → <b>LGN</b></div>
+  </section>
+
+  <div class="cards">
+
+    <a class="card c1" href="ARRC-Claude-Agentic-Tour.html">
+      <span class="ribbon flag">★ Start here</span>
+      <div class="glow"></div>
+      <div class="num">01</div><div class="ic">🤖</div>
+      <h2>The Agentic Tour</h2>
+      <div class="for">For people who already prompt</div>
+      <p>Watch Claude act as an agent — plan a multi-step job, call real systems, pause at approval gates, and hand back finished files. Six ARRC agent blueprints with live traces.</p>
+      <div class="meta-row"><span class="chip">Interactive</span><span class="chip">Medium level</span><span class="chip">Agent blueprints</span></div>
+    </a>
+
+    <a class="card c2" href="ARRC-Claude-Demo.html">
+      <div class="glow"></div>
+      <div class="num">02</div><div class="ic">✨</div>
+      <h2>AI Capability Demo</h2>
+      <div class="for">For an AI-new audience</div>
+      <p>The friendly intro: six everyday consulting tasks — RFP triage, Theory of Change, interview synthesis, Arabic⇄English — shown as prompt → output, with try-it-yourself starters.</p>
+      <div class="meta-row"><span class="chip">Interactive</span><span class="chip">Beginner</span><span class="chip">Try-it prompts</span></div>
+    </a>
+
+    <a class="card c3" href="ARRC-AI-Prompts.html">
+      <div class="glow"></div>
+      <div class="num">03</div><div class="ic">⌨️</div>
+      <h2>Pro Prompt Library</h2>
+      <div class="for">For hands-on use today</div>
+      <p>Copy-ready, ARRC-tuned prompts for the three highest-leverage tools: Claude agentic workflows, Gamma decks, and NotebookLM grounded research. Every prompt has a copy button.</p>
+      <div class="meta-row"><span class="chip">Claude</span><span class="chip">Gamma</span><span class="chip">NotebookLM</span></div>
+    </a>
+
+    <a class="card c4" href="ARRC-AI-Toolkit.html">
+      <div class="glow"></div>
+      <div class="num">04</div><div class="ic">🧰</div>
+      <h2>AI Toolkit</h2>
+      <div class="for">For choosing your stack</div>
+      <p>23 curated, verified tools across RFPs, decks, translation, research, meetings and more — each with what it does and why it helps ARRC, plus a Saudi-sovereign option for sensitive data.</p>
+      <div class="meta-row"><span class="chip">Reference</span><span class="chip">Filterable</span><span class="chip">23 tools</span></div>
+    </a>
+
+    <a class="card c5" href="ARRC-Whats-Next.html">
+      <div class="glow"></div>
+      <div class="num">05</div><div class="ic">🧭</div>
+      <h2>What's Next</h2>
+      <div class="for">For the adoption plan</div>
+      <p>A phased roadmap from demo to delivery to a client-facing offering — pilots, governance, a 30-60-90 plan, success metrics, and ISO/IEC 42001 training, certification and auditing.</p>
+      <div class="meta-row"><span class="chip">Roadmap</span><span class="chip">ISO 42001</span><span class="chip">30-60-90</span></div>
+    </a>
+
+    <a class="card c6" href="ARRC-LGN-Solutions.html">
+      <span class="ribbon new">New</span>
+      <div class="glow"></div>
+      <div class="num">06</div><div class="ic">🎓</div>
+      <h2>LGN AI Solutions</h2>
+      <div class="for">For the joint offering</div>
+      <p>The London Gulf Nexus suite ARRC can take to education clients: AI Teaching Assistant, Asset Management, AI Kids Club, AI Passport, AI Course Catalogue — UK academic, ISO 42001-certified.</p>
+      <div class="meta-row"><span class="chip">ARRC × LGN</span><span class="chip">EdTech</span><span class="chip">5 products</span></div>
+    </a>
+
+    <a class="card c7" href="ARRC-Survey-Form.html">
+      <div class="glow"></div>
+      <div class="num">07</div><div class="ic">📝</div>
+      <h2>Seminar Survey</h2>
+      <div class="for">For event feedback</div>
+      <p>A branded seminar-satisfaction form — Likert ratings, NPS and open feedback — that exports responses straight to Excel. Scan the QR below to open it on a phone.</p>
+      <div class="meta-row"><span class="chip">Form</span><span class="chip">Excel export</span><span class="chip">QR code</span></div>
+    </a>
+
+  </div>
+
+  <section class="qr-panel">
+    <div class="qr-card"><img src="survey-qr.png" alt="QR code to open the seminar survey" /></div>
+    <div class="qr-info">
+      <div class="qr-kick">Seminar feedback · scan to respond</div>
+      <h3>The survey, one scan away</h3>
+      <p>Point a phone camera at the code to open the branded survey. Responses export to Excel from the form's organiser panel.</p>
+      <div class="qr-actions">
+        <a class="qbtn primary" href="ARRC-Survey-Form.html">Open the form →</a>
+        <button class="qbtn" id="copyLink">⧉ Copy link</button>
+      </div>
+      <div class="qr-url" id="formUrl">https://amirshurrab.github.io/arrc-ai/ARRC-Survey-Form.html</div>
+      <div class="qr-hint">QR &amp; link point to your GitHub Pages URL. They go live the moment you deploy the <code>arrc-ai</code> repo (Settings → Pages).</div>
+    </div>
+  </section>
+
+  <div class="note">
+    <b>How to use this hub:</b> present in order for a full session, or jump straight to one page. Pages 1–2 show the room what's possible; pages 3–6 are what they keep, use, and sell. Everything works offline — share the whole folder and these links stay live.
+  </div>
+
+  <footer>
+    <div class="cobrand">
+      <img class="cb-arrc" src="arrc-logo.svg" alt="ARRC" />
+      <span class="cb-x">in partnership with</span>
+      <span class="lgn-chip"><img src="https://londongulfnexus.com/wp-content/uploads/2025/05/London-Gulf-Nexus-Logo-transparent.png" alt="London Gulf Nexus" /></span>
+    </div>
+    Vision Achievers for the Digital Era — AI enablement hub
+    <div class="disc">
+      Demonstration and enablement materials. Illustrative examples contain no confidential ARRC or client data. AI output is a first draft that a qualified consultant must review and verify; any external action requires human approval. LGN brand assets © London Gulf Nexus.
+    </div>
+  </footer>
+</div>
+<div class="qtoast" id="qtoast">Copied ✓</div>
+<script>
+  document.getElementById('copyLink').addEventListener('click',()=>{
+    const u=document.getElementById('formUrl').textContent.trim();
+    navigator.clipboard.writeText(u).then(()=>{const t=document.getElementById('qtoast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600);});
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ARRC × Claude — Vision Achievers, 10× Faster</title>
+<style>
+  :root{
+    --bg:#0a1418;
+    --bg2:#0f1c21;
+    --panel:#13232a;
+    --panel2:#1a2e36;
+    --line:#27424b;
+    --ink:#eef3f8;
+    --muted:#9fb0c0;
+    --muted2:#6f8195;
+    --gold:#00a9b0;
+    --gold2:#5fe0d6;
+    --teal:#3fb6a8;
+    --red:#e06a6a;
+    --amber:#e0a93f;
+    --green:#5fbf8a;
+    --radius:16px;
+    --shadow:0 18px 50px rgba(0,0,0,.45);
+    --mono:"SF Mono",ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:radial-gradient(1200px 700px at 75% -10%,#16202b 0%,var(--bg) 55%);
+    color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  a{color:inherit}
+  .accent{color:var(--gold2)}
+  .teal{color:var(--teal)}
+
+  /* ---------- top bar ---------- */
+  header.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);
+    background:rgba(11,15,20,.72);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:1120px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:.5px}
+  .logo{width:38px;height:38px;border-radius:9px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--gold),#0a6e73);color:#0b0f14;font-weight:800;font-size:15px}
+  .nav-links{display:flex;gap:26px;font-size:14px;color:var(--muted)}
+  .nav-links a{text-decoration:none;transition:color .2s}
+  .nav-links a:hover{color:var(--gold2)}
+  @media(max-width:760px){.nav-links{display:none}}
+
+  /* ---------- hero ---------- */
+  .hero{padding:78px 0 40px;text-align:center;position:relative}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;letter-spacing:2.5px;
+    text-transform:uppercase;color:var(--gold2);border:1px solid var(--line);
+    background:var(--panel);padding:7px 16px;border-radius:999px;margin-bottom:26px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal)}
+  h1{font-size:clamp(34px,5.4vw,60px);line-height:1.05;margin:0 0 18px;letter-spacing:-1px;font-weight:800}
+  h1 .grad{background:linear-gradient(120deg,#fff 10%,var(--gold2) 55%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{font-size:clamp(16px,2vw,20px);color:var(--muted);max-width:680px;margin:0 auto 14px}
+  .arabic{font-size:18px;color:var(--muted2);direction:rtl;margin-bottom:30px}
+  .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+  .btn{cursor:pointer;border:none;font-family:inherit;font-size:15px;font-weight:600;
+    padding:13px 26px;border-radius:11px;text-decoration:none;display:inline-flex;align-items:center;gap:9px;transition:transform .15s,box-shadow .2s}
+  .btn-primary{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#0b0f14;box-shadow:0 10px 30px rgba(0,169,176,.28)}
+  .btn-primary:hover{transform:translateY(-2px)}
+  .btn-ghost{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--gold)}
+
+  /* ---------- stat bar ---------- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:54px 0 12px}
+  @media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px 20px;text-align:center}
+  .stat .num{font-size:30px;font-weight:800;color:var(--gold2);letter-spacing:-1px}
+  .stat .lab{font-size:13px;color:var(--muted);margin-top:4px}
+
+  /* ---------- section frame ---------- */
+  section{padding:66px 0}
+  .sec-head{text-align:center;max-width:720px;margin:0 auto 40px}
+  .kicker{font-size:12.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);font-weight:700}
+  .sec-head h2{font-size:clamp(26px,3.4vw,38px);margin:12px 0 12px;letter-spacing:-.5px}
+  .sec-head p{color:var(--muted);font-size:16px;margin:0}
+
+  /* ---------- demo lab ---------- */
+  .lab{background:var(--bg2);border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
+  .lab-top{display:flex;align-items:center;gap:9px;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--panel)}
+  .tl{width:11px;height:11px;border-radius:50%}
+  .tl.r{background:#ef5f5f}.tl.y{background:#e7b94b}.tl.g{background:#54c07e}
+  .lab-title{margin-left:10px;font-family:var(--mono);font-size:12.5px;color:var(--muted2)}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;padding:14px;border-bottom:1px solid var(--line);background:var(--panel2)}
+  .tab{cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--muted);
+    font-family:inherit;font-size:13px;font-weight:600;padding:9px 14px;border-radius:9px;transition:all .18s;white-space:nowrap}
+  .tab:hover{color:var(--ink);border-color:var(--gold)}
+  .tab.active{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#0b0f14;border-color:transparent}
+  .panel-body{padding:26px}
+  .demo{display:none;animation:fade .35s ease}
+  .demo.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .demo h3{margin:0 0 6px;font-size:20px}
+  .pain{display:flex;gap:10px;align-items:flex-start;background:rgba(224,106,106,.08);border:1px solid rgba(224,106,106,.25);
+    border-radius:12px;padding:13px 15px;margin:14px 0 20px;font-size:14.5px;color:#f0cdcd}
+  .pain b{color:#ffd9d9}
+  .io-label{font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);font-weight:700;margin-bottom:8px;display:block}
+
+  .prompt-box{position:relative;background:#0d1218;border:1px solid var(--line);border-radius:12px;padding:16px 16px 16px;font-family:var(--mono);font-size:13.5px;color:#d6e2ee;white-space:pre-wrap;line-height:1.55}
+  .copy-btn{position:absolute;top:10px;right:10px;cursor:pointer;border:1px solid var(--line);background:var(--panel2);
+    color:var(--muted);font-family:inherit;font-size:11.5px;font-weight:600;padding:6px 11px;border-radius:8px;transition:all .18s;display:inline-flex;align-items:center;gap:6px}
+  .copy-btn:hover{border-color:var(--gold);color:var(--gold2)}
+  .copy-btn.done{background:rgba(95,191,138,.15);border-color:var(--green);color:var(--green)}
+  .ar-input{direction:rtl;text-align:right}
+
+  .run-row{margin:18px 0;text-align:center}
+  .run-btn{cursor:pointer;border:none;font-family:inherit;font-weight:700;font-size:14px;color:#0b0f14;
+    background:linear-gradient(135deg,var(--teal),#2f8f84);padding:12px 24px;border-radius:11px;display:inline-flex;align-items:center;gap:9px;transition:transform .15s}
+  .run-btn:hover{transform:translateY(-2px)}
+  .run-btn:disabled{opacity:.6;cursor:default;transform:none}
+
+  .output{border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden;display:none}
+  .output.show{display:block;animation:fade .4s ease}
+  .out-head{display:flex;align-items:center;gap:9px;padding:11px 15px;border-bottom:1px solid var(--line);background:var(--panel2);font-size:12.5px;color:var(--muted)}
+  .spark{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 9px var(--teal)}
+  .out-body{padding:18px 20px;font-size:14px}
+  .out-body h4{margin:18px 0 8px;font-size:14.5px;color:var(--gold2)}
+  .out-body h4:first-child{margin-top:0}
+  .out-body ul{margin:6px 0;padding-left:20px;color:var(--muted)}
+  .out-body li{margin:4px 0}
+  .out-body p{color:var(--muted);margin:6px 0}
+  table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted2);font-size:11px;letter-spacing:.5px;text-transform:uppercase}
+  td{color:var(--ink)}
+  .rag{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px}
+  .rag.g{background:rgba(95,191,138,.16);color:var(--green)}
+  .rag.a{background:rgba(224,169,63,.16);color:var(--amber)}
+  .rag.r{background:rgba(224,106,106,.16);color:var(--red)}
+  .thinking{display:flex;align-items:center;gap:10px;padding:18px 20px;color:var(--muted);font-size:14px}
+  .pulse{display:inline-flex;gap:5px}
+  .pulse span{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:bounce 1s infinite}
+  .pulse span:nth-child(2){animation-delay:.15s}.pulse span:nth-child(3){animation-delay:.3s}
+  @keyframes bounce{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-5px)}}
+
+  /* ---------- try-it cards ---------- */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+  .try{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  .try .tag{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);font-weight:700}
+  .try h4{margin:8px 0 12px;font-size:16px}
+  .mini-prompt{position:relative;background:#0d1218;border:1px solid var(--line);border-radius:10px;padding:13px 13px;font-family:var(--mono);font-size:12.5px;color:#cdd9e6;white-space:pre-wrap;line-height:1.5}
+
+  /* ---------- inspire wall ---------- */
+  .ind{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:860px){.ind{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.ind{grid-template-columns:1fr}}
+  .ind-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+  .ind-card .ic{font-size:22px}
+  .ind-card h4{margin:8px 0 10px;font-size:15px;color:var(--gold2)}
+  .ind-card ul{margin:0;padding-left:18px;font-size:13.5px;color:var(--muted)}
+  .ind-card li{margin:5px 0}
+
+  /* ---------- playbook ---------- */
+  .play{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  @media(max-width:860px){.play{grid-template-columns:1fr 1fr}}
+  @media(max-width:520px){.play{grid-template-columns:1fr}}
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px;position:relative}
+  .step .n{font-size:13px;font-weight:800;color:#0b0f14;background:var(--gold2);width:28px;height:28px;border-radius:8px;display:grid;place-items:center;margin-bottom:12px}
+  .step h4{margin:0 0 6px;font-size:15px}
+  .step p{margin:0;font-size:13.5px;color:var(--muted)}
+
+  .note{background:linear-gradient(135deg,rgba(63,182,168,.08),rgba(0,169,176,.06));border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-top:30px}
+  .note b{color:var(--gold2)}
+
+  footer{border-top:1px solid var(--line);padding:34px 0 50px;text-align:center;color:var(--muted2);font-size:13px}
+  .disc{max-width:760px;margin:18px auto 0;font-size:12px;color:var(--muted2);line-height:1.5}
+
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(40px);
+    background:var(--green);color:#06140c;font-weight:700;font-size:13.5px;padding:11px 22px;border-radius:11px;
+    box-shadow:var(--shadow);opacity:0;transition:all .3s;z-index:99}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.brand-logo{height:26px;width:auto;display:block;flex:0 0 auto}.cobrand{display:flex;align-items:center;justify-content:center;gap:16px;margin:10px 0 12px;flex-wrap:wrap}.cobrand .cb-arrc{height:22px;opacity:.9}.cobrand .cb-x{font-size:12px;color:var(--muted2);letter-spacing:.5px}.lgn-chip{background:#fff;border-radius:10px;padding:7px 12px;display:inline-flex}.lgn-chip img{height:36px;display:block}.brand-sep{color:var(--muted2);font-weight:300;font-size:18px;margin:0 4px}.lgn-hdr{background:#fff;border-radius:7px;padding:4px 8px;display:inline-flex;align-items:center}.lgn-hdr img{height:28px;display:block}</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-in">
+    <div class="brand"><img class="brand-logo" src="arrc-logo.svg" alt="ARRC" /><span class="brand-sep">|</span><span class="lgn-hdr"><img src="https://londongulfnexus.com/wp-content/uploads/2025/05/London-Gulf-Nexus-Logo-transparent.png" alt="London Gulf Nexus" /></span></div>
+    <nav class="nav-links">
+      <a href="#why">Why now</a>
+      <a href="#lab">Live demos</a>
+      <a href="#try">Try it</a>
+      <a href="#ideas">Ideas</a>
+      <a href="#play">Run a demo</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="eyebrow"><span class="dot"></span> An AI capability tour, built for ARRC</div>
+    <h1><span class="grad">Vision Achievers —<br/>now 10× faster.</span></h1>
+    <p class="sub">ARRC turns national ambitions into operating reality. This page shows what Claude does with <b style="color:#fff">your actual consulting work</b> — RFPs, transformation roadmaps, stakeholder interviews, PMO reports — not toy examples.</p>
+    <p class="arabic">محققو الرؤية في العصر الرقمي — والآن بسرعة عشرة أضعاف.</p>
+    <div class="cta-row">
+      <a href="#lab" class="btn btn-primary">▶ See it on ARRC work</a>
+      <a href="#try" class="btn btn-ghost">Copy a prompt &amp; try now</a>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="num">~2 days → mins</div><div class="lab">Triaging a 70-page government RFP</div></div>
+      <div class="stat"><div class="num">AR ⇄ EN</div><div class="lab">Bilingual drafting &amp; translation, instantly</div></div>
+      <div class="stat"><div class="num">100s</div><div class="lab">Pages of interviews synthesized at once</div></div>
+      <div class="stat"><div class="num">0 → draft</div><div class="lab">From blank page to board-ready structure</div></div>
+    </div>
+  </section>
+
+  <!-- WHY NOW -->
+  <section id="why">
+    <div class="sec-head">
+      <div class="kicker">Why this matters for a consulting firm</div>
+      <h2>Your margin is the time between a request and a credible first draft</h2>
+      <p>Claude doesn't replace the consultant's judgment — it removes the slow, blank-page parts so your experts spend their hours on strategy, client relationships, and quality. New to AI? Every example below is one click away from trying yourself.</p>
+    </div>
+    <div class="grid2">
+      <div class="try">
+        <div class="tag">The shift</div>
+        <h4>From "who has bandwidth?" to "let's pressure-test the draft"</h4>
+        <p style="color:var(--muted);font-size:14px;margin:0">A junior consultant with Claude can produce the first 80% of a deliverable — compliance matrix, ToC, interview themes, a deck skeleton — in minutes. Seniors start from a structured draft instead of a blank document, and review instead of build.</p>
+      </div>
+      <div class="try">
+        <div class="tag">The fit with ARRC</div>
+        <h4>Built for high-stakes, document-heavy, bilingual work</h4>
+        <p style="color:var(--muted);font-size:14px;margin:0">Government transformation runs on long Arabic &amp; English documents — RFPs, regulations, theories of change, operating models, PMO reporting. That is exactly the kind of dense, structured language work Claude is strongest at.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEMO LAB -->
+  <section id="lab">
+    <div class="sec-head">
+      <div class="kicker">Live demos · on ARRC-style work</div>
+      <h2>Pick a real workflow. Press run. Watch.</h2>
+      <p>Six tasks straight from ARRC's services and industries. Each shows the pain, the exact prompt (with a copy button), and the kind of output Claude returns.</p>
+    </div>
+
+    <div class="lab">
+      <div class="lab-top">
+        <span class="tl r"></span><span class="tl y"></span><span class="tl g"></span>
+        <span class="lab-title">arrc-consulting-assistant · claude</span>
+      </div>
+      <div class="tabs" id="tabs"></div>
+      <div class="panel-body" id="panels"></div>
+    </div>
+  </section>
+
+  <!-- TRY IT -->
+  <section id="try">
+    <div class="sec-head">
+      <div class="kicker">Try it yourself · 60 seconds</div>
+      <h2>Copy a prompt, paste it into Claude, add your own document</h2>
+      <p>No setup, no jargon. Copy one of these, open Claude, paste it, then attach or paste a real (non-confidential) document. Watch what comes back.</p>
+    </div>
+    <div class="grid2" id="tryGrid"></div>
+  </section>
+
+  <!-- IDEAS / INSPIRE WALL -->
+  <section id="ideas">
+    <div class="sec-head">
+      <div class="kicker">Ideas across the industries you serve</div>
+      <h2>One spark per sector</h2>
+      <p>A starting menu — not a limit. If it involves reading, drafting, structuring, translating, or summarizing, it's in scope.</p>
+    </div>
+    <div class="ind" id="indGrid"></div>
+  </section>
+
+  <!-- PLAYBOOK -->
+  <section id="play">
+    <div class="sec-head">
+      <div class="kicker">How to present this to the room</div>
+      <h2>A 15-minute demo that lands every time</h2>
+      <p>The recommended way to show Claude to an audience that's new to AI — make it about <i>them</i>, make it live, make it concrete.</p>
+    </div>
+    <div class="play">
+      <div class="step"><div class="n">1</div><h4>Open on their pain</h4><p>Start with one task everyone in the room dreads — "the 70-page RFP that lands at 4pm." Get a nod before you show anything.</p></div>
+      <div class="step"><div class="n">2</div><h4>Run it live, on real work</h4><p>Paste an actual (non-confidential) ARRC-style document and run a demo above. Live beats slides — let them watch it happen.</p></div>
+      <div class="step"><div class="n">3</div><h4>Hand them the keyboard</h4><p>Give one skeptic a copy-paste prompt from the "Try it" section and let them run their own task. Belief comes from doing.</p></div>
+      <div class="step"><div class="n">4</div><h4>Close on judgment</h4><p>End clear: Claude drafts and structures; the consultant decides, verifies, and owns quality. It scales people — it doesn't replace them.</p></div>
+    </div>
+
+    <div class="note">
+      <b>My recommendation, in one line:</b> don't pitch "AI" — pitch <i>ARRC's own deliverables, produced in minutes</i>. Lead with the RFP triage and the Arabic⇄English summary (instantly relatable, visibly impressive), then let the room drive. Keep a curated, non-confidential sample document ready so every demo runs on something they recognize. The wow isn't that Claude writes — it's that it writes <i>their</i> work.
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="brand" style="justify-content:center;margin-bottom:8px"><img class="brand-logo" src="arrc-logo.svg" alt="ARRC" /> × Claude</div>
+  Vision Achievers for the Digital Era · capability tour
+  <div class="disc">
+    Demonstration page. The outputs shown are illustrative examples of the <i>type</i> and <i>structure</i> of work Claude produces, crafted for this walkthrough — not real client deliverables, and they contain no confidential ARRC or client data. In live use, always have a qualified consultant review and verify AI-generated content before it reaches a client. Built to be opened, shared, and presented offline.
+  </div>
+<div class="cobrand"><img class="cb-arrc" src="arrc-logo.svg" alt="ARRC" /><span class="cb-x">in partnership with</span><span class="lgn-chip"><img src="https://londongulfnexus.com/wp-content/uploads/2025/05/London-Gulf-Nexus-Logo-transparent.png" alt="London Gulf Nexus" /></span></div></footer>
+
+<div class="toast" id="toast">Copied to clipboard ✓</div>
+
+<script>
+/* ---------------- DATA ---------------- */
+const DEMOS = [
+  {
+    tab:"🏛️ Government RFP triage",
+    title:"Triage a 70-page government tender — before tomorrow",
+    pain:"A government entity sends a <b>70-page Arabic RFP</b> at 4pm. The bid/no-bid call and a first proposal structure are due tomorrow morning. A consultant usually spends a day and a half just reading and extracting.",
+    prompt:`You are a bid manager at a management consulting firm.
+I've attached a government RFP. Produce:
+1) A compliance matrix of the mandatory requirements (requirement | met? | evidence/owner).
+2) The top 3 win themes we should lead with.
+3) A proposal table of contents mapped to the evaluation criteria.
+4) Five clarification questions to send the client.
+Keep it board-ready and flag anything that could disqualify us.`,
+    out:`<h4>1 · Compliance matrix (excerpt)</h4>
+<table><tr><th>Mandatory requirement</th><th>Met?</th><th>Evidence / owner</th></tr>
+<tr><td>5+ yrs gov. transformation experience</td><td><span class="rag g">Yes</span></td><td>3 entity case studies · BD lead</td></tr>
+<tr><td>Certified PMO methodology</td><td><span class="rag a">Partial</span></td><td>Confirm cert validity · PMO lead</td></tr>
+<tr><td>Local presence in Riyadh</td><td><span class="rag g">Yes</span></td><td>Al Wurud office</td></tr>
+<tr><td>Arabic + English delivery team</td><td><span class="rag g">Yes</span></td><td>Bilingual staffing plan</td></tr></table>
+<h4>2 · Win themes</h4>
+<ul><li>Deep local + global-network blend — world-class insight, regional fluency.</li><li>Proven with major government entities at national scale.</li><li>"Practical transformation" — execution, not just advice.</li></ul>
+<h4>3 · Proposal table of contents (mapped to scoring)</h4>
+<ul><li>Understanding &amp; approach <i>(↔ Technical 40%)</i></li><li>Methodology &amp; roadmap <i>(↔ Methodology 25%)</i></li><li>Team &amp; governance <i>(↔ Team 20%)</i></li><li>Track record <i>(↔ Experience 15%)</i></li></ul>
+<h4>4 · Clarification questions</h4>
+<ul><li>Is the incumbent advisor eligible to re-bid?</li><li>Expected on-site vs. remote split?</li><li>Are deliverables required in Arabic, English, or both?</li></ul>
+<p style="color:var(--green)">⚠ Disqualifier check: page-limit and submission-format rules extracted — all currently met.</p>`
+  },
+  {
+    tab:"🎯 Theory of Change",
+    title:"Draft a Theory of Change for a brand-new national entity",
+    pain:"ARRC stands up new entities from the ground up. Designing a <b>Theory of Change</b> normally means weeks of workshops before a single page exists.",
+    prompt:`Draft a Theory of Change for a newly established
+national housing-regulator executive arm.
+Structure it as Inputs → Activities → Outputs → Outcomes → Impact.
+List 4 key assumptions and propose 5 outcome KPIs
+aligned to a national housing strategy.`,
+    out:`<h4>Theory of Change — logic chain</h4>
+<table><tr><th>Stage</th><th>Content</th></tr>
+<tr><td><b>Inputs</b></td><td>Mandate &amp; funding model, seconded experts, regulator data, governance charter</td></tr>
+<tr><td><b>Activities</b></td><td>Define operating model, set developer standards, build licensing &amp; monitoring</td></tr>
+<tr><td><b>Outputs</b></td><td>Licensing framework live, standards published, integrated data platform</td></tr>
+<tr><td><b>Outcomes</b></td><td>Faster approvals, higher developer compliance, clearer market signals</td></tr>
+<tr><td><b>Impact</b></td><td>More adequate, affordable housing supply meeting national targets</td></tr></table>
+<h4>Key assumptions</h4>
+<ul><li>Clear legal mandate vs. the parent regulator.</li><li>Developers respond to standards + incentives.</li><li>Data is shared across ministries.</li><li>Funding is stable for 3+ years.</li></ul>
+<h4>Outcome KPIs</h4>
+<ul><li>Avg. licensing turnaround (days) ↓</li><li>% developer compliance ↑</li><li>Housing units enabled / year</li><li>Stakeholder satisfaction index</li><li>Affordability ratio improvement</li></ul>`
+  },
+  {
+    tab:"🗣️ Interview synthesis",
+    title:"Turn 22 stakeholder interviews into 5 clear themes",
+    pain:"Operating-model projects generate <b>100+ pages of interview notes</b>. Clustering them into defensible themes by hand takes days and is hard to keep objective.",
+    prompt:`I'll paste notes from 22 stakeholder interviews about
+an entity's operating model. Cluster them into 5 themes.
+For each theme give: a one-line insight, the % of
+interviewees who raised it, one anonymized representative
+quote, and the implication for the target operating model.`,
+    out:`<h4>Synthesized themes</h4>
+<table><tr><th>Theme</th><th>Raised by</th><th>Implication for TOM</th></tr>
+<tr><td><b>Unclear decision rights</b><br/><span style="color:var(--muted)">"No one knows who signs off."</span></td><td>82%</td><td>Define RACI + delegation matrix</td></tr>
+<tr><td><b>Duplicated functions</b><br/><span style="color:var(--muted)">"Three teams do the same review."</span></td><td>68%</td><td>Consolidate into shared service</td></tr>
+<tr><td><b>Weak cross-entity data flow</b><br/><span style="color:var(--muted)">"We re-key everything by hand."</span></td><td>59%</td><td>Integration layer + data owners</td></tr>
+<tr><td><b>Capability gaps</b><br/><span style="color:var(--muted)">"We hire advisors for core work."</span></td><td>45%</td><td>Capability-build roadmap</td></tr>
+<tr><td><b>Change fatigue</b><br/><span style="color:var(--muted)">"Fourth restructure in five years."</span></td><td>41%</td><td>Phased rollout + comms plan</td></tr></table>
+<p>Every quote is traceable back to its source interview on request — you stay in control of the evidence.</p>`
+  },
+  {
+    tab:"🌐 Arabic ⇄ English",
+    title:"Translate a regulation and brief the executive — in one step",
+    pain:"Government documents arrive in Arabic; international partners need English; the executive needs a one-pager. Today that's <b>three handoffs across three people</b>.",
+    prompt:`Translate this Arabic regulatory memo to English,
+then give a 5-bullet executive summary and flag
+2 implementation risks for our client.`,
+    promptAr:`المدخل (عربي): «تلتزم الجهات الحكومية بإعادة هيكلة نماذجها التشغيلية بما يتوافق مع مستهدفات التحول الوطني خلال مدة لا تتجاوز ثمانية عشر شهراً…»`,
+    out:`<h4>English translation</h4>
+<p style="color:var(--ink)">"Government entities shall restructure their operating models in line with national transformation targets within a period not exceeding eighteen months…"</p>
+<h4>Executive summary</h4>
+<ul><li>18-month deadline to realign operating models with national targets.</li><li>Applies to all in-scope government entities.</li><li>Compliance is mandatory, not advisory.</li><li>Restructuring must map explicitly to transformation KPIs.</li><li>Creates immediate demand for transformation support.</li></ul>
+<h4>Implementation risks</h4>
+<ul><li><b>Capacity:</b> 18 months is tight for entities lacking an internal PMO.</li><li><b>Alignment:</b> "national targets" need translation into entity-level metrics early, or rework follows.</li></ul>`
+  },
+  {
+    tab:"📊 PMO status report",
+    title:"Six messy workstream updates → one steering-committee report",
+    pain:"Before every steering committee, someone stitches together <b>fragmented updates</b> (mixed Arabic/English, half-sentences) from 6 workstreams into a clean RAG report. Hours, every cycle.",
+    prompt:`Here are raw updates from 6 transformation workstreams
+(mixed Arabic/English, bullet fragments).
+Produce a steering-committee PMO report:
+overall RAG status, a one-line RAG status per workstream,
+top 3 risks, and 3 decisions needed from the committee.`,
+    out:`<h4>Overall status: <span class="rag a">Amber</span></h4>
+<table><tr><th>Workstream</th><th>Status</th><th>One-liner</th></tr>
+<tr><td>Strategy &amp; design</td><td><span class="rag g">Green</span></td><td>Target operating model signed off</td></tr>
+<tr><td>Org &amp; governance</td><td><span class="rag a">Amber</span></td><td>RACI drafted; awaiting leadership review</td></tr>
+<tr><td>Digital platform</td><td><span class="rag r">Red</span></td><td>Vendor onboarding slipped 3 weeks</td></tr>
+<tr><td>Process &amp; procedures</td><td><span class="rag g">Green</span></td><td>40 of 52 procedures documented</td></tr>
+<tr><td>Capability building</td><td><span class="rag a">Amber</span></td><td>Training calendar pending budget sign-off</td></tr>
+<tr><td>Change &amp; comms</td><td><span class="rag g">Green</span></td><td>Stakeholder map &amp; plan complete</td></tr></table>
+<h4>Top 3 risks</h4>
+<ul><li>Platform vendor delay threatens go-live date.</li><li>Budget approval blocking two workstreams.</li><li>Leadership review backlog slowing decisions.</li></ul>
+<h4>Decisions needed from the committee</h4>
+<ul><li>Approve revised platform timeline + recovery plan.</li><li>Release training budget.</li><li>Confirm RACI sign-off authority.</li></ul>`
+  },
+  {
+    tab:"🏗️ Operating model",
+    title:"Design a target operating model on the spot",
+    pain:"Restructuring a core entity (e.g. an Enforcement Sector) starts from a blank canvas — functions, structure, RACI, capabilities. The framework alone can take a week to draft.",
+    prompt:`Design a target operating model for an Enforcement Sector.
+Give: 5 core functions with a one-line mandate each,
+a 3-layer org structure, a RACI for the
+"case enforcement" process, and 3 capabilities to build.`,
+    out:`<h4>Core functions</h4>
+<ul><li><b>Case Intake</b> — receive, validate, route cases.</li><li><b>Enforcement Ops</b> — execute enforcement actions.</li><li><b>Legal &amp; Compliance</b> — ensure due process.</li><li><b>Data &amp; Analytics</b> — monitor, target, report.</li><li><b>Stakeholder Liaison</b> — coordinate with courts &amp; agencies.</li></ul>
+<h4>Org structure (3 layers)</h4>
+<p>Sector Head → 5 function directors → operational teams + shared analytics unit.</p>
+<h4>RACI — "case enforcement" process</h4>
+<table><tr><th>Step</th><th>R</th><th>A</th><th>C / I</th></tr>
+<tr><td>Validate case</td><td>Intake</td><td>Intake Dir.</td><td>Legal (C)</td></tr>
+<tr><td>Decide action</td><td>Enf. Ops</td><td>Sector Head</td><td>Legal (C)</td></tr>
+<tr><td>Execute</td><td>Enf. Ops</td><td>Ops Dir.</td><td>Liaison (I)</td></tr>
+<tr><td>Report</td><td>Analytics</td><td>Data Dir.</td><td>All (I)</td></tr></table>
+<h4>Capabilities to build</h4>
+<ul><li>Case-management digital platform.</li><li>Analytics-led risk targeting.</li><li>Inter-agency coordination protocols.</li></ul>`
+  }
+];
+
+const TRY = [
+  {tag:"Document → structure", h:"Summarize any long report", p:`Read the attached document and give me:
+a 5-bullet executive summary, the 3 key decisions
+it implies, and 3 questions it leaves open.`},
+  {tag:"Blank page → draft", h:"Outline a client deck", p:`Create a 12-slide steering-committee deck outline
+for a digital transformation program. For each slide:
+a title, 3 bullets, and a suggested visual.`},
+  {tag:"Bilingual", h:"Polish + translate", p:`Rewrite this paragraph to be clear and executive-ready,
+then give me an Arabic version suitable for a
+government audience.`},
+  {tag:"Analysis", h:"Pressure-test a recommendation", p:`Here is our recommendation to a client.
+Argue the strongest case against it, list the
+assumptions it depends on, and tell me what
+evidence would change the conclusion.`}
+];
+
+const INDUSTRIES = [
+  {ic:"🏥",h:"Health",items:["Draft a Theory of Change &amp; roadmap","Summarize clinical-pathway regulations","Build a service-delivery model outline"]},
+  {ic:"🏘️",h:"Real Estate &amp; Housing",items:["Map integration points across programs","Draft a governance model + RACI","Define an entity's core identity statement"]},
+  {ic:"⚖️",h:"Justice",items:["Review draft legislation for gaps","Compare policy methodologies","Restructure a sector's operating model"]},
+  {ic:"🛡️",h:"Defense &amp; Military",items:["Stand up a PMO reporting framework","Summarize cybersecurity standards","Build cross-department sub-plans"]},
+  {ic:"🎓",h:"Education &amp; Labor",items:["Analyze labor-market data → insights","Evaluate &amp; restructure programs","Align curricula to market needs"]},
+  {ic:"🚚",h:"Transport &amp; Logistics",items:["Document working procedures","Draft authority matrices","Design value chains &amp; operating models"]}
+];
+
+/* ---------------- RENDER ---------------- */
+const tabsEl=document.getElementById('tabs');
+const panelsEl=document.getElementById('panels');
+DEMOS.forEach((d,i)=>{
+  const t=document.createElement('button');
+  t.className='tab'+(i===0?' active':'');t.textContent=d.tab;t.dataset.i=i;
+  tabsEl.appendChild(t);
+
+  const arBlock=d.promptAr?`<div class="prompt-box ar-input" style="margin-bottom:12px">${d.promptAr}</div>`:'';
+  const p=document.createElement('div');
+  p.className='demo'+(i===0?' active':'');p.dataset.i=i;
+  p.innerHTML=`
+    <h3>${d.title}</h3>
+    <div class="pain">⏱️ <div><b>The pain today.</b> ${d.pain}</div></div>
+    <span class="io-label">The prompt you give Claude</span>
+    ${arBlock}
+    <div class="prompt-box">${escapeHtml(d.prompt)}
+      <button class="copy-btn" data-copy="${encodeURIComponent(d.prompt)}">⧉ Copy</button>
+    </div>
+    <div class="run-row">
+      <button class="run-btn" data-run="${i}">▶ Run with Claude</button>
+    </div>
+    <div class="output" id="out-${i}">
+      <div class="out-head"><span class="spark"></span> Claude · response</div>
+      <div class="thinking" id="think-${i}"><span class="pulse"><span></span><span></span><span></span></span> Reading the document &amp; drafting…</div>
+      <div class="out-body" id="body-${i}" style="display:none">${d.out}</div>
+    </div>`;
+  panelsEl.appendChild(p);
+});
+
+tabsEl.addEventListener('click',e=>{
+  const b=e.target.closest('.tab');if(!b)return;
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.demo').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  document.querySelector('.demo[data-i="'+b.dataset.i+'"]').classList.add('active');
+});
+
+/* try grid */
+const tryGrid=document.getElementById('tryGrid');
+TRY.forEach(t=>{
+  const c=document.createElement('div');c.className='try';
+  c.innerHTML=`<div class="tag">${t.tag}</div><h4>${t.h}</h4>
+    <div class="mini-prompt">${escapeHtml(t.p)}
+      <button class="copy-btn" data-copy="${encodeURIComponent(t.p)}">⧉ Copy</button></div>`;
+  tryGrid.appendChild(c);
+});
+
+/* industries */
+const indGrid=document.getElementById('indGrid');
+INDUSTRIES.forEach(x=>{
+  const c=document.createElement('div');c.className='ind-card';
+  c.innerHTML=`<div class="ic">${x.ic}</div><h4>${x.h}</h4><ul>${x.items.map(i=>'<li>'+i+'</li>').join('')}</ul>`;
+  indGrid.appendChild(c);
+});
+
+/* ---------------- INTERACTIONS ---------------- */
+// run buttons
+document.addEventListener('click',e=>{
+  const r=e.target.closest('.run-btn');
+  if(r){
+    const i=r.dataset.run;
+    const out=document.getElementById('out-'+i);
+    const think=document.getElementById('think-'+i);
+    const body=document.getElementById('body-'+i);
+    out.classList.add('show');think.style.display='flex';body.style.display='none';
+    r.disabled=true;r.textContent='⏳ Running…';
+    setTimeout(()=>{
+      think.style.display='none';body.style.display='block';
+      r.disabled=false;r.textContent='↻ Run again';
+      out.scrollIntoView({behavior:'smooth',block:'nearest'});
+    },1500);
+  }
+  const c=e.target.closest('.copy-btn');
+  if(c){
+    const text=decodeURIComponent(c.dataset.copy);
+    navigator.clipboard.writeText(text).then(()=>{
+      const old=c.innerHTML;c.innerHTML='✓ Copied';c.classList.add('done');
+      showToast();
+      setTimeout(()=>{c.innerHTML=old;c.classList.remove('done')},1600);
+    }).catch(()=>{showToast('Press ⌘/Ctrl+C to copy')});
+  }
+});
+
+function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+let toastT;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg||'Copied to clipboard ✓';
+  t.classList.add('show');clearTimeout(toastT);
+  toastT=setTimeout(()=>t.classList.remove('show'),1700);
+}
+</script>
+</body>
+</html>

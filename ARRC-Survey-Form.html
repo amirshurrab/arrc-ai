@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Seminar Satisfaction Survey — ARRC × LGN</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --bg:#0a1418;--bg2:#0f1c21;--panel:#13232a;--panel2:#1a2e36;--line:#27424b;
+    --ink:#eef6f7;--muted:#9fb8bd;--muted2:#6f9098;
+    --teal:#00a9b0;--teal2:#5fe0d6;--teald:#21656d;--lime:#afcb36;
+    --green:#5fbf8a;--amber:#e0a93f;--red:#e06a6a;
+    --radius:16px;--shadow:0 18px 50px rgba(0,0,0,.5);
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1100px 650px at 78% -10%,#10262b 0%,var(--bg) 55%);
+    color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px}
+  a{color:inherit}
+
+  header.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);
+    background:rgba(10,20,24,.74);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;padding:13px 22px;max-width:760px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:4px;font-weight:700}
+  .brand-logo{height:26px;width:auto;display:block}
+  .brand-sep{color:var(--muted2);font-weight:300;font-size:18px;margin:0 6px}
+  .lgn-hdr{background:#fff;border-radius:7px;padding:4px 8px;display:inline-flex;align-items:center}
+  .lgn-hdr img{height:28px;display:block}
+  .home-link{font-size:13px;color:var(--muted);text-decoration:none}.home-link:hover{color:var(--teal2)}
+
+  .hero{padding:44px 0 8px;text-align:center}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:2.5px;
+    text-transform:uppercase;color:var(--teal2);border:1px solid var(--line);background:var(--panel);padding:6px 15px;border-radius:999px;margin-bottom:18px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal)}
+  h1{font-size:clamp(27px,4.4vw,40px);line-height:1.08;margin:0 0 12px;letter-spacing:-.6px;font-weight:800}
+  h1 .grad{background:linear-gradient(120deg,#fff 8%,var(--teal2) 55%,var(--teal));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{font-size:15.5px;color:var(--muted);max-width:580px;margin:0 auto}
+
+  form{margin:30px 0 10px}
+  .block{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px 22px 8px;margin-bottom:18px}
+  .block-title{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--teal2);font-weight:700;margin:0 0 4px}
+  .block-sub{font-size:13px;color:var(--muted2);margin:0 0 16px}
+  .field{margin-bottom:18px}
+  .field > label{display:block;font-size:14.5px;font-weight:600;margin-bottom:9px}
+  .field .req{color:var(--teal2)}
+  input[type=text],input[type=email],input[type=date],textarea,select{
+    width:100%;background:#0d1820;border:1px solid var(--line);border-radius:10px;color:var(--ink);
+    font-family:inherit;font-size:14px;padding:11px 13px;transition:border-color .15s}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--teal)}
+  textarea{min-height:84px;resize:vertical}
+  ::placeholder{color:var(--muted2)}
+
+  .likert{display:flex;gap:8px;flex-wrap:wrap}
+  .likert label{flex:1;min-width:62px;cursor:pointer}
+  .likert input{position:absolute;opacity:0;width:0;height:0}
+  .likert .opt{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;
+    border:1px solid var(--line);background:var(--panel2);border-radius:11px;padding:11px 6px;transition:all .14s}
+  .likert .opt .v{font-size:17px;font-weight:800;color:var(--muted)}
+  .likert .opt .t{font-size:10.5px;color:var(--muted2);line-height:1.2}
+  .likert label:hover .opt{border-color:var(--teal)}
+  .likert input:checked + .opt{background:linear-gradient(135deg,rgba(0,169,176,.25),rgba(95,224,214,.08));border-color:var(--teal)}
+  .likert input:checked + .opt .v{color:var(--teal2)}
+  .likert input:focus-visible + .opt{box-shadow:0 0 0 2px var(--teal)}
+
+  .nps{display:flex;gap:6px;flex-wrap:wrap}
+  .nps label{cursor:pointer}
+  .nps input{position:absolute;opacity:0;width:0;height:0}
+  .nps .opt{width:42px;height:42px;display:grid;place-items:center;font-weight:700;font-size:14px;color:var(--muted);
+    border:1px solid var(--line);background:var(--panel2);border-radius:10px;transition:all .14s}
+  .nps label:hover .opt{border-color:var(--teal)}
+  .nps input:checked + .opt{background:linear-gradient(135deg,rgba(0,169,176,.3),rgba(95,224,214,.1));border-color:var(--teal);color:var(--teal2)}
+  .nps-scale{display:flex;justify-content:space-between;font-size:11px;color:var(--muted2);margin-top:7px}
+
+  .submit-row{display:flex;justify-content:center;margin:8px 0 4px}
+  .btn-submit{cursor:pointer;border:none;font-family:inherit;font-weight:700;font-size:16px;color:#04181a;
+    background:linear-gradient(135deg,var(--teal2),var(--teal));padding:15px 40px;border-radius:13px;
+    box-shadow:0 12px 30px rgba(0,169,176,.3);transition:transform .15s}
+  .btn-submit:hover{transform:translateY(-2px)}
+  .err{color:var(--red);font-size:13px;text-align:center;margin-top:10px;min-height:18px}
+
+  .thanks{display:none;text-align:center;background:var(--panel);border:1px solid var(--teal);border-radius:20px;padding:48px 30px;margin:30px 0}
+  .thanks.show{display:block;animation:pop .4s ease}
+  @keyframes pop{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+  .thanks .check{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teald));
+    display:grid;place-items:center;margin:0 auto 18px;font-size:32px}
+  .thanks h2{margin:0 0 8px;font-size:24px}
+  .thanks p{color:var(--muted);margin:0 0 18px}
+  .thanks button{cursor:pointer;background:var(--panel2);border:1px solid var(--line);color:var(--ink);
+    font-family:inherit;font-weight:600;font-size:14px;padding:11px 22px;border-radius:11px}
+  .thanks button:hover{border-color:var(--teal)}
+
+  /* organiser panel */
+  .organiser{background:var(--bg2);border:1px dashed var(--line);border-radius:var(--radius);padding:18px 20px;margin:26px 0}
+  .organiser summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--muted);list-style:none}
+  .organiser summary::-webkit-details-marker{display:none}
+  .organiser summary::before{content:"⚙ ";color:var(--teal2)}
+  .org-body{margin-top:14px}
+  .org-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .org-btn{cursor:pointer;border:1px solid var(--line);background:var(--panel2);color:var(--ink);
+    font-family:inherit;font-weight:600;font-size:13px;padding:10px 16px;border-radius:10px;transition:all .14s;display:inline-flex;align-items:center;gap:7px}
+  .org-btn:hover{border-color:var(--teal);color:var(--teal2)}
+  .org-btn.primary{background:linear-gradient(135deg,var(--teal2),var(--teal));color:#04181a;border-color:transparent}
+  .org-btn.danger:hover{border-color:var(--red);color:var(--red)}
+  .org-count{font-size:13px;color:var(--muted)}
+  .org-note{font-size:12px;color:var(--muted2);margin-top:12px;line-height:1.5}
+  .org-note code{font-family:var(--mono);background:var(--panel2);padding:1px 6px;border-radius:5px;color:var(--teal2)}
+
+  footer{border-top:1px solid var(--line);padding:26px 0 46px;text-align:center;color:var(--muted2);font-size:13px;margin-top:24px}
+  .cobrand{display:flex;align-items:center;justify-content:center;gap:16px;margin:6px 0 12px;flex-wrap:wrap}
+  .cobrand .cb-arrc{height:22px;opacity:.9}
+  .cobrand .cb-x{font-size:12px;color:var(--muted2)}
+  .lgn-chip{background:#fff;border-radius:10px;padding:7px 12px;display:inline-flex}
+  .lgn-chip img{height:36px;display:block}
+  .disc{max-width:600px;margin:12px auto 0;font-size:11.5px;color:var(--muted2);line-height:1.5}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(40px);
+    background:var(--green);color:#06140c;font-weight:700;font-size:13.5px;padding:11px 22px;border-radius:11px;box-shadow:var(--shadow);opacity:0;transition:all .3s;z-index:99}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-in">
+    <div class="brand"><img class="brand-logo" src="arrc-logo.svg" alt="ARRC" /><span class="brand-sep">|</span><span class="lgn-hdr"><img src="https://londongulfnexus.com/wp-content/uploads/2025/05/London-Gulf-Nexus-Logo-transparent.png" alt="London Gulf Nexus" /></span></div>
+    <a class="home-link" href="ARRC-AI-Hub.html">← Hub</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow"><span class="dot"></span> Seminar Satisfaction Survey</div>
+    <h1><span class="grad">Tell us how we did.</span></h1>
+    <p class="sub">Your feedback takes about 2 minutes and helps us make every ARRC × LGN seminar better. All ratings are confidential.</p>
+  </section>
+
+  <form id="surveyForm" novalidate>
+    <!-- About -->
+    <div class="block">
+      <div class="block-title">About the session</div>
+      <div class="block-sub">Help us connect your feedback to the right seminar.</div>
+      <div class="field"><label>Seminar / course title <span class="req">*</span></label>
+        <input type="text" name="seminar_title" placeholder="e.g. AI Strategy for C-Suite" /></div>
+      <div class="field"><label>Date attended</label>
+        <input type="date" name="date_attended" /></div>
+      <div class="field"><label>Presenter / trainer</label>
+        <input type="text" name="presenter" placeholder="Presenter name (optional)" /></div>
+    </div>
+
+    <!-- Ratings -->
+    <div class="block">
+      <div class="block-title">Your ratings</div>
+      <div class="block-sub">1 = Strongly disagree &nbsp;·&nbsp; 5 = Strongly agree</div>
+      <div id="ratings"></div>
+    </div>
+
+    <!-- Recommend -->
+    <div class="block">
+      <div class="block-title">Would you recommend it?</div>
+      <div class="block-sub">How likely are you to recommend this seminar to a colleague?</div>
+      <div class="field">
+        <div class="nps" id="nps"></div>
+        <div class="nps-scale"><span>0 — Not at all likely</span><span>10 — Extremely likely</span></div>
+      </div>
+    </div>
+
+    <!-- Open feedback -->
+    <div class="block">
+      <div class="block-title">In your words</div>
+      <div class="block-sub">Optional, but the most useful part for us.</div>
+      <div class="field"><label>What did you find most valuable?</label>
+        <textarea name="most_valuable" placeholder="The part that was worth your time…"></textarea></div>
+      <div class="field"><label>What could be improved?</label>
+        <textarea name="improve" placeholder="Be honest — it helps."></textarea></div>
+      <div class="field"><label>Topics you'd like in future seminars</label>
+        <textarea name="future_topics" placeholder="What should we run next?"></textarea></div>
+    </div>
+
+    <!-- Respondent (optional) -->
+    <div class="block">
+      <div class="block-title">About you <span style="color:var(--muted2);font-weight:400;text-transform:none;letter-spacing:0">— optional</span></div>
+      <div class="block-sub">Leave blank to stay anonymous. We only use this to follow up if you'd like us to.</div>
+      <div class="field"><label>Full name</label><input type="text" name="name" placeholder="Optional" /></div>
+      <div class="field"><label>Email</label><input type="email" name="email" placeholder="Optional" /></div>
+      <div class="field"><label>Organisation / entity</label><input type="text" name="organisation" placeholder="Optional" /></div>
+    </div>
+
+    <div class="submit-row"><button type="submit" class="btn-submit">Submit feedback</button></div>
+    <div class="err" id="err"></div>
+  </form>
+
+  <div class="thanks" id="thanks">
+    <div class="check">✓</div>
+    <h2>Thank you!</h2>
+    <p>Your feedback has been recorded. We're grateful you took the time.</p>
+    <button onclick="resetForm()">Submit another response</button>
+  </div>
+
+  <!-- ORGANISER PANEL -->
+  <details class="organiser">
+    <summary>Organiser tools (export responses)</summary>
+    <div class="org-body">
+      <div class="org-row">
+        <button class="org-btn primary" onclick="exportExcel()">⬇ Export responses to Excel</button>
+        <button class="org-btn" onclick="exportCSV()">⬇ CSV</button>
+        <button class="org-btn danger" onclick="clearAll()">🗑 Clear stored responses</button>
+        <span class="org-count" id="orgCount">0 responses on this device</span>
+      </div>
+      <div class="org-note">
+        Responses submitted on <b>this device/browser</b> are stored locally and included in the export — ideal for a kiosk or tablet at the seminar. For <b>multi-device collection via QR</b>, set a collection endpoint: open this file and paste your Formspree or Google Apps Script URL into <code>const ENDPOINT</code> at the top of the script, and every submission will also post there into one central sheet.
+      </div>
+    </div>
+  </details>
+</div>
+
+<footer>
+  <div class="cobrand">
+    <img class="cb-arrc" src="arrc-logo.svg" alt="ARRC" />
+    <span class="cb-x">in partnership with</span>
+    <span class="lgn-chip"><img src="https://londongulfnexus.com/wp-content/uploads/2025/05/London-Gulf-Nexus-Logo-transparent.png" alt="London Gulf Nexus" /></span>
+  </div>
+  <div class="disc">© 2026 ARRC × London Gulf Nexus. Feedback is confidential and used only to improve our seminars. LGN brand assets © London Gulf Nexus.</div>
+</footer>
+
+<div class="toast" id="toast">Saved ✓</div>
+
+<script>
+/* ============================================================
+   COLLECTION ENDPOINT (optional)
+   Leave "" to collect on this device only (export via the
+   Organiser panel). To gather responses from many phones via
+   the QR code, paste a Formspree (https://formspree.io) or
+   Google Apps Script Web App URL below — submissions POST there.
+   ============================================================ */
+const ENDPOINT = "";
+
+const SCALE=[["1","Strongly disagree"],["2","Disagree"],["3","Neutral"],["4","Agree"],["5","Strongly agree"]];
+const RATINGS=[
+  ["q_expectations","The seminar met my expectations."],
+  ["q_relevant","The content was relevant to my work."],
+  ["q_objectives","The objectives of the seminar were clearly achieved."],
+  ["q_presenter_knowledge","The presenter was knowledgeable and well-prepared."],
+  ["q_presenter_delivery","The presenter delivered the material clearly and engagingly."],
+  ["q_pace","The pace and duration were appropriate."],
+  ["q_materials","The materials and resources were useful."],
+  ["q_logistics","The organisation and logistics (venue, timing) were well managed."],
+  ["q_overall","Overall, I am satisfied with this seminar."]
+];
+const COLUMNS=[
+  ["timestamp","Timestamp"],["seminar_title","Seminar / course"],["date_attended","Date attended"],["presenter","Presenter"],
+  ...RATINGS.map(([id,q])=>[id,q]),
+  ["nps_recommend","Recommend (0-10)"],
+  ["most_valuable","Most valuable"],["improve","Could improve"],["future_topics","Future topics"],
+  ["name","Name"],["email","Email"],["organisation","Organisation"]
+];
+const KEY="arrc_lgn_survey_responses";
+
+/* render ratings */
+const rWrap=document.getElementById('ratings');
+RATINGS.forEach(([id,q])=>{
+  const f=document.createElement('div');f.className='field';
+  f.innerHTML=`<label>${q} <span class="req">*</span></label>
+    <div class="likert">${SCALE.map(([v,t])=>`
+      <label><input type="radio" name="${id}" value="${v}" />
+        <span class="opt"><span class="v">${v}</span><span class="t">${t}</span></span></label>`).join('')}</div>`;
+  rWrap.appendChild(f);
+});
+/* render NPS */
+const npsWrap=document.getElementById('nps');
+for(let i=0;i<=10;i++){
+  npsWrap.insertAdjacentHTML('beforeend',
+    `<label><input type="radio" name="nps_recommend" value="${i}" /><span class="opt">${i}</span></label>`);
+}
+
+function store(){try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){return[]}}
+function setStore(a){localStorage.setItem(KEY,JSON.stringify(a))}
+function refreshCount(){document.getElementById('orgCount').textContent=store().length+" responses on this device";}
+refreshCount();
+
+document.getElementById('surveyForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  const err=document.getElementById('err');err.textContent="";
+  const fd=new FormData(this);
+  // validate
+  if(!(fd.get('seminar_title')||"").trim()){err.textContent="Please enter the seminar title.";window.scrollTo({top:0,behavior:'smooth'});return;}
+  for(const [id,q] of RATINGS){ if(!fd.get(id)){err.textContent="Please answer every rating question (the starred ones).";document.querySelector(`[name="${id}"]`).closest('.field').scrollIntoView({behavior:'smooth',block:'center'});return;} }
+  // build record
+  const rec={timestamp:new Date().toISOString()};
+  COLUMNS.forEach(([id])=>{ if(id!=="timestamp") rec[id]=(fd.get(id)||"").toString(); });
+  // save locally
+  const all=store();all.push(rec);setStore(all);refreshCount();
+  // optional central endpoint
+  if(ENDPOINT){ fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(rec)}).catch(()=>{}); }
+  // show thanks
+  document.getElementById('surveyForm').style.display='none';
+  document.getElementById('thanks').classList.add('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+function resetForm(){
+  const f=document.getElementById('surveyForm');f.reset();f.style.display='block';
+  document.getElementById('thanks').classList.remove('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function rows(){
+  const data=store();
+  const header=COLUMNS.map(([,label])=>label);
+  const body=data.map(r=>COLUMNS.map(([id])=>r[id]??""));
+  return [header,...body];
+}
+function exportExcel(){
+  const data=store();
+  if(!data.length){showToast("No responses yet");return;}
+  const ws=XLSX.utils.aoa_to_sheet(rows());
+  ws['!cols']=COLUMNS.map(([id])=>({wch: id==='timestamp'?22 : (id.startsWith('q_')?14 : (['most_valuable','improve','future_topics','seminar_title'].includes(id)?34:18))}));
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"Responses");
+  XLSX.writeFile(wb,"Seminar-Survey-Responses.xlsx");
+  showToast("Excel downloaded ✓");
+}
+function exportCSV(){
+  const data=store();if(!data.length){showToast("No responses yet");return;}
+  const ws=XLSX.utils.aoa_to_sheet(rows());
+  const csv=XLSX.utils.sheet_to_csv(ws);
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download="Seminar-Survey-Responses.csv";a.click();
+  showToast("CSV downloaded ✓");
+}
+function clearAll(){
+  if(!store().length){showToast("Nothing to clear");return;}
+  if(confirm("Delete all responses stored on this device? Export first if you need them.")){setStore([]);refreshCount();showToast("Cleared");}
+}
+let toastT;
+function showToast(m){const t=document.getElementById('toast');t.textContent=m||"Saved ✓";t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),1700);}
+</script>
+</body>
+</html>

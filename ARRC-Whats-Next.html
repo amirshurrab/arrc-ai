@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ARRC × Claude — What's Next</title>
+<style>
+  :root{
+    --bg:#0a1418;--bg2:#0f1c21;--panel:#13232a;--panel2:#1a2e36;--line:#27424b;
+    --ink:#eef3f8;--muted:#9fb0c0;--muted2:#6f8195;
+    --gold:#00a9b0;--gold2:#5fe0d6;--teal:#3fb6a8;--blue:#5b8def;--violet:#a98ce0;--green:#5fbf8a;--amber:#e0a93f;
+    --radius:16px;--shadow:0 18px 50px rgba(0,0,0,.45);
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:radial-gradient(1100px 650px at 78% -10%,#16202b 0%,var(--bg) 55%);
+    color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  a{color:inherit}
+
+  header.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);
+    background:rgba(11,15,20,.72);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:1080px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:.5px}
+  .logo{width:38px;height:38px;border-radius:9px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--gold),#0a6e73);color:#0b0f14;font-weight:800;font-size:15px}
+  .home-link{font-size:13.5px;color:var(--muted);text-decoration:none}.home-link:hover{color:var(--gold2)}
+
+  .hero{padding:58px 0 14px;text-align:center}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;letter-spacing:2.5px;
+    text-transform:uppercase;color:var(--gold2);border:1px solid var(--line);background:var(--panel);padding:7px 16px;border-radius:999px;margin-bottom:22px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal)}
+  h1{font-size:clamp(32px,5vw,52px);line-height:1.05;margin:0 0 16px;letter-spacing:-1px;font-weight:800}
+  h1 .grad{background:linear-gradient(120deg,#fff 8%,var(--gold2) 52%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{font-size:clamp(15px,1.9vw,19px);color:var(--muted);max-width:700px;margin:0 auto}
+  .sub b{color:#fff}
+
+  section{padding:40px 0 8px}
+  .sec-head{max-width:760px;margin:0 auto 28px;text-align:center}
+  .kicker{font-size:12.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);font-weight:700}
+  .sec-head h2{font-size:clamp(24px,3.2vw,34px);margin:12px 0 10px;letter-spacing:-.4px}
+  .sec-head p{color:var(--muted);font-size:15.5px;margin:0}
+
+  /* phases */
+  .phase{display:grid;grid-template-columns:170px 1fr;gap:0;background:var(--bg2);border:1px solid var(--line);
+    border-radius:18px;overflow:hidden;margin-bottom:20px}
+  @media(max-width:680px){.phase{grid-template-columns:1fr}}
+  .phase-side{padding:24px 22px;border-right:1px solid var(--line);background:var(--panel)}
+  @media(max-width:680px){.phase-side{border-right:none;border-bottom:1px solid var(--line)}}
+  .phase-tag{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:4px 11px;border-radius:999px;display:inline-block;margin-bottom:12px}
+  .p0 .phase-tag{background:rgba(95,191,138,.16);color:var(--green)}
+  .p1 .phase-tag{background:rgba(63,182,168,.16);color:var(--teal)}
+  .p2 .phase-tag{background:rgba(169,140,224,.16);color:var(--violet)}
+  .phase-side h3{margin:0 0 4px;font-size:20px}
+  .phase-side .when{font-size:13px;color:var(--muted2);font-family:var(--mono)}
+  .phase-body{padding:22px 24px}
+  .phase-body .goal{font-size:14px;color:var(--gold2);font-weight:600;margin:0 0 14px}
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:560px){.actions{grid-template-columns:1fr}}
+  .act{display:flex;gap:11px;align-items:flex-start;font-size:14px}
+  .act .b{flex:0 0 22px;width:22px;height:22px;border-radius:7px;display:grid;place-items:center;font-size:12px;
+    background:var(--panel2);border:1px solid var(--line);color:var(--gold2);margin-top:2px}
+  .act b{color:var(--ink)} .act span{color:var(--muted)}
+
+  /* metrics */
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:6px}
+  @media(max-width:760px){.metrics{grid-template-columns:1fr 1fr}}
+  .metric{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px;text-align:center}
+  .metric .n{font-size:24px;font-weight:800;color:var(--gold2);letter-spacing:-.5px}
+  .metric .l{font-size:12.5px;color:var(--muted);margin-top:5px}
+
+  /* 30-60-90 */
+  .ninety{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:680px){.ninety{grid-template-columns:1fr}}
+  .day{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  .day h4{margin:0 0 12px;font-size:16px;color:var(--gold2);display:flex;align-items:center;gap:9px}
+  .day h4 .num{font-family:var(--mono);font-size:12px;color:#0b0f14;background:var(--gold2);padding:3px 9px;border-radius:7px;font-weight:800}
+  .day ul{margin:0;padding-left:18px;font-size:13.5px;color:var(--muted)}.day li{margin:6px 0}
+
+  .gov-note{display:flex;gap:13px;align-items:flex-start;background:rgba(91,141,239,.07);border:1px solid rgba(91,141,239,.25);
+    border-radius:var(--radius);padding:20px 22px;margin:8px 0;font-size:14px;color:#cfe0ff}
+  .gov-note b{color:#dce8ff}
+
+  .cta{background:linear-gradient(135deg,rgba(0,169,176,.1),rgba(63,182,168,.06));border:1px solid var(--line);
+    border-radius:18px;padding:26px;text-align:center;margin-top:10px}
+  .cta h3{margin:0 0 8px;font-size:20px}
+  .cta p{margin:0 0 16px;color:var(--muted);font-size:14.5px}
+  .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .btn{text-decoration:none;font-size:14px;font-weight:600;padding:11px 20px;border-radius:11px;display:inline-flex;align-items:center;gap:8px;transition:transform .15s,border-color .2s}
+  .btn-primary{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#0b0f14}
+  .btn-primary:hover{transform:translateY(-2px)}
+  .btn-ghost{background:var(--panel);border:1px solid var(--line);color:var(--ink)}.btn-ghost:hover{border-color:var(--gold)}
+
+  footer{border-top:1px solid var(--line);padding:30px 0 50px;text-align:center;color:var(--muted2);font-size:13px;margin-top:34px}
+  .disc{max-width:760px;margin:14px auto 0;font-size:12px;color:var(--muted2);line-height:1.5}
+.brand-logo{height:26px;width:auto;display:block;flex:0 0 auto}.cobrand{display:flex;align-items:center;justify-content:center;gap:16px;margin:10px 0 12px;flex-wrap:wrap}.cobrand .cb-arrc{height:22px;opacity:.9}.cobrand .cb-x{font-size:12px;color:var(--muted2);letter-spacing:.5px}.lgn-chip{background:#fff;border-radius:10px;padding:7px 12px;display:inline-flex}.lgn-chip img{height:36px;display:block}.brand-sep{color:var(--muted2);font-weight:300;font-size:18px;margin:0 4px}.lgn-hdr{background:#fff;border-radius:7px;padding:4px 8px;display:inline-flex;align-items:center}.lgn-hdr img{height:28px;display:block}</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-in">
+    <div class="brand"><img class="brand-logo" src="arrc-logo.svg" alt="ARRC" /><span class="brand-sep">|</span><span class="lgn-hdr"><img src="https://londongulfnexus.com/wp-content/uploads/2025/05/London-Gulf-Nexus-Logo-transparent.png" alt="London Gulf Nexus" /></span></div>
+    <a class="home-link" href="ARRC-AI-Hub.html">← All ARRC AI pages</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow"><span class="dot"></span> From demo to adoption — the path forward</div>
+    <h1><span class="grad">What's next for ARRC.</span></h1>
+    <p class="sub">A pragmatic, phased plan to move AI from <b>"impressive demo"</b> to <b>everyday delivery</b> — and ultimately into a <b>client-facing offering</b>. Low-risk pilots first, governance from day one, scale once value is proven.</p>
+  </section>
+
+  <!-- roadmap -->
+  <section>
+    <div class="sec-head">
+      <div class="kicker">The adoption roadmap</div>
+      <h2>Three phases, built to de-risk</h2>
+      <p>Each phase earns the right to the next: prove value small, then scale, then productise.</p>
+    </div>
+
+    <div class="phase p0">
+      <div class="phase-side">
+        <span class="phase-tag">Now</span>
+        <h3>Foundations</h3>
+        <div class="when">Weeks 1–4</div>
+      </div>
+      <div class="phase-body">
+        <p class="goal">Goal: one real workflow visibly faster, with guardrails in place.</p>
+        <div class="actions">
+          <div class="act"><span class="b">1</span><div><b>Run one agent pilot.</b> <span>Pick the bid-response or PMO-report workflow and run it on a real, non-confidential project.</span></div></div>
+          <div class="act"><span class="b">2</span><div><b>Set data guardrails.</b> <span>Define what can and can't go into which tool; choose enterprise tiers; flag data-residency needs.</span></div></div>
+          <div class="act"><span class="b">3</span><div><b>Adopt the starter stack.</b> <span>Claude, M365 Copilot, Gamma, DeepL, Perplexity, Fireflies for a first cohort.</span></div></div>
+          <div class="act"><span class="b">4</span><div><b>Name AI champions.</b> <span>2–3 consultants who own the prompt library and help colleagues.</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase p1">
+      <div class="phase-side">
+        <span class="phase-tag">Next</span>
+        <h3>Scale</h3>
+        <div class="when">Months 1–3</div>
+      </div>
+      <div class="phase-body">
+        <p class="goal">Goal: AI woven into how teams actually deliver, with value measured.</p>
+        <div class="actions">
+          <div class="act"><span class="b">1</span><div><b>Connect the systems.</b> <span>Wire Claude into SharePoint/Outlook/Teams/Slack so agents work where data lives — read-first.</span></div></div>
+          <div class="act"><span class="b">2</span><div><b>Build firm memory.</b> <span>Codify ARRC templates, methodologies and terminology so output is on-brand by default.</span></div></div>
+          <div class="act"><span class="b">3</span><div><b>Standardise prompts.</b> <span>Roll the prompt library across teams; capture the best ones from champions.</span></div></div>
+          <div class="act"><span class="b">4</span><div><b>Measure the gain.</b> <span>Track hours saved per deliverable and quality/turnaround on bids and reports.</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase p2">
+      <div class="phase-side">
+        <span class="phase-tag">Later</span>
+        <h3>Embed &amp; productise</h3>
+        <div class="when">Months 3–9</div>
+      </div>
+      <div class="phase-body">
+        <p class="goal">Goal: AI as a differentiator in delivery — and a new revenue line.</p>
+        <div class="actions">
+          <div class="act"><span class="b">1</span><div><b>Agentic delivery.</b> <span>Standing agents for PMO reporting, document intelligence and benchmarking across engagements.</span></div></div>
+          <div class="act"><span class="b">2</span><div><b>Go sovereign for gov data.</b> <span>Deploy Arabic-first, Saudi-hosted models (ALLaM via HUMAIN) for sensitive client work.</span></div></div>
+          <div class="act"><span class="b">3</span><div><b>Launch LGN.</b> <span>Package ARRC's AI learning suite as a client-facing offering — a new growth engine.</span></div></div>
+          <div class="act"><span class="b">4</span><div><b>Sell the capability.</b> <span>Add "AI-enabled transformation" to ARRC's service lines and case studies.</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ISO 42001 -->
+  <section>
+    <div class="sec-head">
+      <div class="kicker">A new service line, ready to sell</div>
+      <h2>ISO/IEC 42001 — responsible AI, certified</h2>
+      <p>The world's first certifiable standard for AI management systems. With LGN (already ISO/IEC 42001-certified), ARRC can offer clients the full lifecycle — not just advice.</p>
+    </div>
+    <div class="ninety">
+      <div class="day"><h4><span class="num">01</span> Training</h4><ul><li>Executive &amp; practitioner courses on AI governance</li><li>AI-management-system (AIMS) awareness for client teams</li><li>Delivered with LGN's UK academic faculty</li></ul></div>
+      <div class="day"><h4><span class="num">02</span> Certification</h4><ul><li>Readiness assessment &amp; gap analysis</li><li>Build the AI management system &amp; evidence base</li><li>Guide clients to accredited certification</li></ul></div>
+      <div class="day"><h4><span class="num">03</span> Auditing</h4><ul><li>Internal audits against ISO/IEC 42001</li><li>Pre-certification &amp; surveillance audits</li><li>Continuous-improvement reviews</li></ul></div>
+    </div>
+    <div class="gov-note" style="margin-top:18px">🛡️ <div><b>Why this is timely for ARRC:</b> as Saudi government entities adopt AI under the national strategy, demand for demonstrable, certifiable AI governance is rising fast. ISO/IEC 42001 training, certification-readiness and auditing turns ARRC's governance credibility into a repeatable, high-margin offering.</div></div>
+  </section>
+
+  <!-- metrics -->
+  <section>
+    <div class="sec-head">
+      <div class="kicker">How you'll know it's working</div>
+      <h2>Track these from day one</h2>
+    </div>
+    <div class="metrics">
+      <div class="metric"><div class="n">↓ 50–70%</div><div class="l">Time to first draft on bids &amp; reports</div></div>
+      <div class="metric"><div class="n">↑ throughput</div><div class="l">More proposals pursued per consultant</div></div>
+      <div class="metric"><div class="n">Hours/week</div><div class="l">Saved per consultant, measured</div></div>
+      <div class="metric"><div class="n">New line</div><div class="l">AI-enabled revenue from LGN</div></div>
+    </div>
+    <p style="text-align:center;color:var(--muted2);font-size:12.5px;margin-top:12px">Illustrative target ranges — set ARRC's own baselines in the pilot, then measure against them.</p>
+  </section>
+
+  <!-- 30-60-90 -->
+  <section>
+    <div class="sec-head">
+      <div class="kicker">If you want a fast start</div>
+      <h2>A 30–60–90 day view</h2>
+    </div>
+    <div class="ninety">
+      <div class="day">
+        <h4><span class="num">30</span> Prove</h4>
+        <ul><li>Pick 1 workflow + 1 team</li><li>Run the agent pilot live</li><li>Set data-use rules</li><li>Shortlist the starter stack</li></ul>
+      </div>
+      <div class="day">
+        <h4><span class="num">60</span> Expand</h4>
+        <ul><li>Onboard a second cohort</li><li>Connect one core system</li><li>Publish the prompt library</li><li>Start measuring time saved</li></ul>
+      </div>
+      <div class="day">
+        <h4><span class="num">90</span> Embed</h4>
+        <ul><li>Stand up a recurring agent (PMO)</li><li>Pilot a sovereign model for gov data</li><li>Draft the LGN go-to-market</li><li>Add AI to a live proposal</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="gov-note">🛡️ <div><b>Guardrails are the enabler, not the brake.</b> For a firm serving national-scale government clients, trust is the product. Keep humans approving anything irreversible, keep confidential data in enterprise/sovereign environments, and verify every AI output before it reaches a client. Done right, governance is exactly what lets ARRC adopt faster than competitors can.</div></div>
+
+  <div class="cta">
+    <h3>Everything you need to start is already built</h3>
+    <p>The pilots, the tools, the prompts and the LGN offering — all in this hub.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="ARRC-Claude-Agentic-Tour.html">▶ Pick a pilot workflow</a>
+      <a class="btn btn-ghost" href="ARRC-AI-Prompts.html">⌨ Open the prompt library</a>
+      <a class="btn btn-ghost" href="ARRC-LGN-Solutions.html">🎓 Explore LGN</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="brand" style="justify-content:center;margin-bottom:8px"><img class="brand-logo" src="arrc-logo.svg" alt="ARRC" /> × Claude</div>
+  <a class="home-link" href="ARRC-AI-Hub.html">← Back to the ARRC AI hub</a>
+  <div class="disc">
+    Strategic recommendations for ARRC's consideration. Timelines, ranges and metrics are illustrative planning aids, not commitments — calibrate against ARRC's own baselines, resources and client commitments. Any tool adoption should follow ARRC's procurement, security and data-governance processes.
+  </div>
+<div class="cobrand"><img class="cb-arrc" src="arrc-logo.svg" alt="ARRC" /><span class="cb-x">in partnership with</span><span class="lgn-chip"><img src="https://londongulfnexus.com/wp-content/uploads/2025/05/London-Gulf-Nexus-Logo-transparent.png" alt="London Gulf Nexus" /></span></div></footer>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ARRC · AI Toolkit — Tools that do the work</title>
+<style>
+  :root{
+    --bg:#0a1418;--bg2:#0f1c21;--panel:#13232a;--panel2:#1a2e36;--line:#27424b;
+    --ink:#eef3f8;--muted:#9fb0c0;--muted2:#6f8195;
+    --gold:#00a9b0;--gold2:#5fe0d6;--teal:#3fb6a8;--blue:#5b8def;
+    --red:#e06a6a;--amber:#e0a93f;--green:#5fbf8a;--violet:#a98ce0;
+    --radius:16px;--shadow:0 18px 50px rgba(0,0,0,.45);
+    --mono:"SF Mono",ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:radial-gradient(1200px 700px at 78% -12%,#16202b 0%,var(--bg) 55%);
+    color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+  a{color:inherit}
+
+  header.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);
+    background:rgba(11,15,20,.72);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:1180px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:.5px}
+  .logo{width:38px;height:38px;border-radius:9px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--gold),#0a6e73);color:#0b0f14;font-weight:800;font-size:15px}
+  .nav-cta{font-size:13.5px;color:var(--muted)}
+
+  .hero{padding:64px 0 24px;text-align:center}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;letter-spacing:2.5px;
+    text-transform:uppercase;color:var(--gold2);border:1px solid var(--line);
+    background:var(--panel);padding:7px 16px;border-radius:999px;margin-bottom:22px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal)}
+  h1{font-size:clamp(32px,5vw,54px);line-height:1.05;margin:0 0 16px;letter-spacing:-1px;font-weight:800}
+  h1 .grad{background:linear-gradient(120deg,#fff 8%,var(--gold2) 52%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{font-size:clamp(15px,1.9vw,19px);color:var(--muted);max-width:720px;margin:0 auto 8px}
+  .sub b{color:#fff}
+
+  /* starter stack */
+  .stack-box{background:linear-gradient(135deg,rgba(0,169,176,.08),rgba(63,182,168,.05));
+    border:1px solid var(--line);border-radius:20px;padding:24px 26px;margin:38px 0 8px;text-align:left}
+  .stack-box h3{margin:0 0 6px;font-size:16px;color:var(--gold2)}
+  .stack-box p{margin:0 0 14px;font-size:14px;color:var(--muted)}
+  .stack-row{display:flex;gap:9px;flex-wrap:wrap}
+  .pill{display:inline-flex;align-items:center;gap:7px;background:var(--panel);border:1px solid var(--line);
+    border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:all .16s}
+  .pill:hover{border-color:var(--gold);color:var(--gold2)}
+  .pill .n{font-size:11px;color:var(--muted2);font-weight:700}
+
+  section{padding:30px 0 20px}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:28px 0 26px;position:sticky;top:66px;z-index:30;
+    background:rgba(11,15,20,.82);backdrop-filter:blur(8px);padding:14px 0}
+  .fbtn{cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--muted);
+    font-family:inherit;font-size:13px;font-weight:600;padding:9px 15px;border-radius:10px;transition:all .16s;white-space:nowrap}
+  .fbtn:hover{color:var(--ink);border-color:var(--gold)}
+  .fbtn.active{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#0b0f14;border-color:transparent}
+  .fbtn .c{font-size:11px;opacity:.7;margin-left:5px}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media(max-width:960px){.grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px;
+    display:flex;flex-direction:column;transition:transform .16s,border-color .2s;animation:fade .3s ease}
+  .card:hover{transform:translateY(-3px);border-color:var(--gold)}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .card-top{display:flex;align-items:center;gap:11px;margin-bottom:10px}
+  .ticon{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-size:19px;flex:0 0 40px;
+    background:var(--panel2);border:1px solid var(--line)}
+  .tname{font-size:16.5px;font-weight:700;line-height:1.1}
+  .tcat{font-size:11px;color:var(--teal);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+  .badges{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 10px}
+  .badge{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;letter-spacing:.3px}
+  .badge.ksa{background:rgba(95,191,138,.15);color:var(--green)}
+  .badge.ar{background:rgba(63,182,168,.15);color:var(--teal)}
+  .badge.gov{background:rgba(91,141,239,.15);color:var(--blue)}
+  .badge.free{background:rgba(224,169,63,.15);color:var(--amber)}
+  .badge.agent{background:rgba(169,140,224,.15);color:var(--violet)}
+  .desc{font-size:13.5px;color:var(--muted);margin:0 0 12px}
+  .why{font-size:13px;color:var(--ink);background:rgba(0,169,176,.06);border-left:2px solid var(--gold);
+    padding:9px 12px;border-radius:8px;margin:0 0 14px}
+  .why b{color:var(--gold2)}
+  .card-actions{margin-top:auto;display:flex;gap:8px}
+  .visit{flex:1;text-align:center;text-decoration:none;background:var(--panel2);border:1px solid var(--line);
+    border-radius:10px;padding:9px;font-size:13px;font-weight:600;color:var(--ink);transition:all .16s}
+  .visit:hover{border-color:var(--gold);color:var(--gold2)}
+  .copy-btn{cursor:pointer;border:1px solid var(--line);background:var(--panel2);color:var(--muted);
+    font-family:inherit;font-size:12.5px;font-weight:600;padding:9px 13px;border-radius:10px;transition:all .16s;white-space:nowrap}
+  .copy-btn:hover{border-color:var(--gold);color:var(--gold2)}
+  .copy-btn.done{background:rgba(95,191,138,.15);border-color:var(--green);color:var(--green)}
+
+  .gov-note{display:flex;gap:13px;align-items:flex-start;background:rgba(91,141,239,.07);border:1px solid rgba(91,141,239,.25);
+    border-radius:var(--radius);padding:20px 22px;margin:34px 0 10px;font-size:14px;color:#cfe0ff}
+  .gov-note b{color:#dce8ff}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin:24px 0 6px;font-size:12.5px;color:var(--muted2)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+
+  footer{border-top:1px solid var(--line);padding:32px 0 50px;text-align:center;color:var(--muted2);font-size:13px;margin-top:30px}
+  .disc{max-width:800px;margin:16px auto 0;font-size:12px;color:var(--muted2);line-height:1.5}
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(40px);
+    background:var(--green);color:#06140c;font-weight:700;font-size:13.5px;padding:11px 22px;border-radius:11px;box-shadow:var(--shadow);opacity:0;transition:all .3s;z-index:99}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.brand-logo{height:26px;width:auto;display:block;flex:0 0 auto}.cobrand{display:flex;align-items:center;justify-content:center;gap:16px;margin:10px 0 12px;flex-wrap:wrap}.cobrand .cb-arrc{height:22px;opacity:.9}.cobrand .cb-x{font-size:12px;color:var(--muted2);letter-spacing:.5px}.lgn-chip{background:#fff;border-radius:10px;padding:7px 12px;display:inline-flex}.lgn-chip img{height:36px;display:block}.brand-sep{color:var(--muted2);font-weight:300;font-size:18px;margin:0 4px}.lgn-hdr{background:#fff;border-radius:7px;padding:4px 8px;display:inline-flex;align-items:center}.lgn-hdr img{height:28px;display:block}</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-in">
+    <div class="brand"><img class="brand-logo" src="arrc-logo.svg" alt="ARRC" /><span class="brand-sep">|</span><span class="lgn-hdr"><img src="https://londongulfnexus.com/wp-content/uploads/2025/05/London-Gulf-Nexus-Logo-transparent.png" alt="London Gulf Nexus" /></span></div>
+    <div class="nav-cta">Verified · June 2026</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow"><span class="dot"></span> A curated AI stack for consulting work</div>
+    <h1><span class="grad">The tools behind<br/>faster, sharper delivery.</span></h1>
+    <p class="sub">A hand-picked set of AI tools mapped to how ARRC actually works — <b>RFPs, decks, translation, research, meetings, brainstorming, client outreach</b> — each with what it does and why it helps. Filter by need below.</p>
+
+    <div class="stack-box">
+      <h3>★ If ARRC adopts just seven, start here</h3>
+      <p>A lean, high-leverage starter stack covering 90% of daily consulting work — with an Arabic-first, sovereign option for sensitive government data.</p>
+      <div class="stack-row">
+        <span class="pill" data-jump="Claude"><span class="n">1</span> Claude — reasoning &amp; agents</span>
+        <span class="pill" data-jump="Microsoft 365 Copilot"><span class="n">2</span> M365 Copilot — in your Office</span>
+        <span class="pill" data-jump="Gamma"><span class="n">3</span> Gamma — decks</span>
+        <span class="pill" data-jump="DeepL"><span class="n">4</span> DeepL — AR⇄EN docs</span>
+        <span class="pill" data-jump="Fireflies"><span class="n">5</span> Fireflies — bilingual meetings</span>
+        <span class="pill" data-jump="Perplexity"><span class="n">6</span> Perplexity — cited research</span>
+        <span class="pill" data-jump="ALLaM / HUMAIN"><span class="n">7</span> ALLaM / HUMAIN — sovereign Arabic</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="filters" id="filters"></div>
+  <div class="grid" id="grid"></div>
+
+  <div class="gov-note">🛡️ <div><b>One rule before you roll any of these out for government clients:</b> don't paste confidential or classified material into consumer (free/personal) tiers. Use enterprise plans with data-processing agreements and, where data must stay in the Kingdom, prioritise Saudi-hosted / sovereign options like ALLaM via HUMAIN. Treat AI output as a first draft a consultant verifies — never as the final word on a client deliverable.</div></div>
+
+  <div class="legend">
+    <span><span class="badge ksa">KSA</span> Saudi-hosted / sovereign</span>
+    <span><span class="badge ar">Arabic</span> Strong Arabic support</span>
+    <span><span class="badge gov">Gov-grade</span> Enterprise security</span>
+    <span><span class="badge free">Free tier</span> Usable for free</span>
+    <span><span class="badge agent">Agentic</span> Multi-step autonomy</span>
+  </div>
+</div>
+
+<footer>
+  <div class="brand" style="justify-content:center;margin-bottom:8px"><img class="brand-logo" src="arrc-logo.svg" alt="ARRC" /> · AI Toolkit</div>
+  Curated &amp; verified June 2026 · Vision Achievers for the Digital Era
+  <div class="disc">
+    Tool descriptions reflect publicly available information as of June 2026 and may change — verify current features, pricing, data-residency terms and security certifications with each vendor before adoption, especially for government engagements. Inclusion is informational, not an endorsement or a security/compliance assessment. ARRC remains responsible for due diligence and for reviewing all AI-generated content.
+  </div>
+<div class="cobrand"><img class="cb-arrc" src="arrc-logo.svg" alt="ARRC" /><span class="cb-x">in partnership with</span><span class="lgn-chip"><img src="https://londongulfnexus.com/wp-content/uploads/2025/05/London-Gulf-Nexus-Logo-transparent.png" alt="London Gulf Nexus" /></span></div></footer>
+
+<div class="toast" id="toast">Copied ✓</div>
+
+<script>
+const TOOLS=[
+  // CORE ASSISTANTS
+  {n:"Claude",cat:"AI assistants",ic:"🟣",url:"https://claude.ai",badges:["agent"],
+   d:"Anthropic's assistant — top-tier reasoning, long-document analysis, drafting and multi-step agentic workflows (the engine behind the agent demos).",
+   why:"Best fit for dense policy/regulation work and Arabic⇄English drafting; powers the autonomous bid, PMO and research agents."},
+  {n:"ChatGPT",cat:"AI assistants",ic:"🟢",url:"https://chatgpt.com",badges:["agent"],
+   d:"OpenAI's broad assistant with agent mode and built-in data analysis. The versatile default for most teams.",
+   why:"Strong autonomous task execution and quick data analysis — useful for labour-market analytics and ad-hoc modelling."},
+  {n:"Google Gemini",cat:"AI assistants",ic:"🔵",url:"https://gemini.google.com",badges:[],
+   d:"Google's assistant with a 1M-token context window and deep Google Workspace integration.",
+   why:"Ingest an entire 200-page RFP or regulation set in one go; ideal if ARRC runs on Google Workspace."},
+  {n:"Microsoft 365 Copilot",cat:"AI assistants",ic:"🟦",url:"https://www.microsoft.com/microsoft-365/copilot",badges:["gov"],
+   d:"AI built directly into Word, Excel, PowerPoint, Outlook and Teams, governed by your Microsoft tenant.",
+   why:"Brings AI into the exact Office apps ARRC builds deliverables in, with enterprise data governance — lowest-friction rollout."},
+
+  // ARABIC / SOVEREIGN
+  {n:"ALLaM / HUMAIN",cat:"Arabic & sovereign",ic:"🟩",url:"https://humain.ai",badges:["ksa","ar","gov"],
+   d:"SDAIA's Arabic-first large language model, distributed via HUMAIN and available on IBM watsonx and Azure AI Foundry.",
+   why:"Arabic-native quality plus Saudi data sovereignty — the safest option when government data must remain in the Kingdom."},
+
+  // TRANSLATION
+  {n:"DeepL",cat:"Translation",ic:"🌐",url:"https://www.deepl.com",badges:["ar"],
+   d:"Premium machine translation that now supports Arabic (MSA), with glossaries for consistent terminology.",
+   why:"Natural, formal Arabic for business and legal documents; glossaries lock in official government terminology across a project."},
+  {n:"X-doc.ai",cat:"Translation",ic:"📑",url:"https://x-doc.ai",badges:["ar"],
+   d:"Document-translation tool benchmarked as highly accurate on technical, legal and regulatory Arabic⇄English content.",
+   why:"Keeps formatting intact when translating contracts, regulations and policy memos between Arabic and English."},
+
+  // PRESENTATIONS
+  {n:"Gamma",cat:"Presentations",ic:"🟪",url:"https://gamma.app",badges:["free"],
+   d:"Generates polished, modern decks (and web pages) from a single prompt. The dominant AI deck tool in 2026.",
+   why:"First-draft client decks in minutes. Note: exports to PowerPoint need light cleanup for brand fonts/layout."},
+  {n:"Beautiful.ai",cat:"Presentations",ic:"🎨",url:"https://www.beautiful.ai",badges:[],
+   d:"Applies design rules automatically for highly polished, on-brand slides with strong PowerPoint export.",
+   why:"Designer-quality decks without a designer. Caution: limited non-Latin fonts — weaker for Arabic-script slides."},
+  {n:"Canva",cat:"Presentations",ic:"🖌️",url:"https://www.canva.com",badges:["free"],
+   d:"All-round design suite with Magic Design AI, brand kits and bilingual templates.",
+   why:"Brand-consistent visuals, proposals and bilingual one-pagers the whole team can produce, Arabic included."},
+
+  // RFP & PROPOSALS
+  {n:"Loopio",cat:"RFP & proposals",ic:"📋",url:"https://loopio.com",badges:[],
+   d:"RFP/RFx response automation with a verified content library and AI first-draft generation.",
+   why:"Reuse winning answers across bids and auto-draft compliance responses — cuts days off each government tender."},
+  {n:"Responsive",cat:"RFP & proposals",ic:"🗂️",url:"https://www.responsive.io",badges:["gov"],
+   d:"Enterprise RFx platform (formerly RFPIO) built for high-volume bids across complex stakeholder teams.",
+   why:"Governance and workflow control when many consultants contribute to large, concurrent government proposals."},
+
+  // RESEARCH
+  {n:"Perplexity",cat:"Research",ic:"🔎",url:"https://www.perplexity.ai",badges:["free"],
+   d:"AI answer engine that cites its sources on every response.",
+   why:"Defensible, source-backed research for sector analysis and benchmarking — every claim is traceable for client work."},
+  {n:"NotebookLM",cat:"Research",ic:"📓",url:"https://notebooklm.google.com",badges:["free"],
+   d:"Google's research tool that grounds answers strictly in the documents you upload, citing the source passage.",
+   why:"Turn a folder of regulations or interview transcripts into a Q&A knowledge base with near-zero hallucination."},
+  {n:"AlphaSense",cat:"Research",ic:"📈",url:"https://www.alpha-sense.com",badges:["gov"],
+   d:"Market and industry-intelligence platform surfacing insights from filings, transcripts and proprietary datasets.",
+   why:"Deep sector intelligence to underpin transformation strategy and feasibility work for major programs."},
+
+  // MEETINGS
+  {n:"Fathom",cat:"Meetings & notes",ic:"🎯",url:"https://fathom.video",badges:["free"],
+   d:"Top-rated AI notetaker — records, transcribes and summarises calls with action items in ~30 seconds. Generous free tier.",
+   why:"Instant minutes and follow-ups from client and stakeholder meetings, with no extra admin for the team."},
+  {n:"Fireflies",cat:"Meetings & notes",ic:"🪰",url:"https://fireflies.ai",badges:["ar"],
+   d:"Meeting assistant supporting 100+ languages, with searchable transcripts across all your meetings.",
+   why:"Transcribes Arabic and English stakeholder interviews and makes a whole project's conversations searchable."},
+  {n:"Fellow",cat:"Meetings & notes",ic:"🔐",url:"https://fellow.app",badges:["gov"],
+   d:"Meeting assistant with SOC2 Type II, GDPR and HIPAA certifications and structured action/decision outputs.",
+   why:"Security-certified notetaking suited to the confidentiality expectations of government engagements."},
+
+  // BRAINSTORMING
+  {n:"Miro AI",cat:"Brainstorming",ic:"🧩",url:"https://miro.com",badges:[],
+   d:"Visual workspace with AI mind maps, sticky-note clustering, summaries and multi-step 'Flows' and 'Sidekicks'.",
+   why:"Run faster strategy workshops — auto-cluster stakeholder inputs into themes and synthesise the board in seconds."},
+  {n:"FigJam",cat:"Brainstorming",ic:"✏️",url:"https://www.figma.com/figjam/",badges:["free"],
+   d:"Lightweight collaborative AI whiteboard for quick ideation and workshop facilitation.",
+   why:"Low-friction option for live, collaborative brainstorming with clients or internal teams."},
+
+  // CLIENT / CRM
+  {n:"HubSpot",cat:"Client & CRM",ic:"🧲",url:"https://www.hubspot.com",badges:[],
+   d:"AI-enabled CRM (Breeze) for pipeline management, client email drafting and engagement tracking.",
+   why:"Run the business-development pipeline, auto-draft client follow-ups and see when prospects open proposals."},
+  {n:"Superhuman",cat:"Client & CRM",ic:"✉️",url:"https://superhuman.com",badges:[],
+   d:"AI-powered email client for faster triage, drafting and follow-up.",
+   why:"Polished, prompt client correspondence at scale — useful for partners managing many relationships."},
+
+  // KNOWLEDGE
+  {n:"Notion AI",cat:"Knowledge & docs",ic:"📔",url:"https://www.notion.com/product/ai",badges:[],
+   d:"Connected workspace with AI search, writing and database automation across your team's knowledge.",
+   why:"Build ARRC's institutional knowledge base — methodologies, templates and past projects — searchable by AI."}
+];
+
+const CATS=["All",...[...new Set(TOOLS.map(t=>t.cat))]];
+const filters=document.getElementById('filters');
+CATS.forEach((c,i)=>{
+  const count=c==="All"?TOOLS.length:TOOLS.filter(t=>t.cat===c).length;
+  const b=document.createElement('button');
+  b.className='fbtn'+(i===0?' active':'');b.dataset.cat=c;
+  b.innerHTML=`${c}<span class="c">${count}</span>`;
+  filters.appendChild(b);
+});
+
+const grid=document.getElementById('grid');
+const badgeLabel={ksa:"KSA",ar:"Arabic",gov:"Gov-grade",free:"Free tier",agent:"Agentic"};
+function render(cat){
+  grid.innerHTML='';
+  TOOLS.filter(t=>cat==="All"||t.cat===cat).forEach(t=>{
+    const badges=t.badges.map(b=>`<span class="badge ${b}">${badgeLabel[b]}</span>`).join('');
+    const card=document.createElement('div');card.className='card';card.dataset.name=t.n;
+    card.innerHTML=`
+      <div class="card-top">
+        <div class="ticon">${t.ic}</div>
+        <div><div class="tname">${t.n}</div><div class="tcat">${t.cat}</div></div>
+      </div>
+      ${badges?`<div class="badges">${badges}</div>`:''}
+      <p class="desc">${t.d}</p>
+      <div class="why"><b>Why it helps ARRC:</b> ${t.why}</div>
+      <div class="card-actions">
+        <a class="visit" href="${t.url}" target="_blank" rel="noopener">Visit ↗</a>
+        <button class="copy-btn" data-copy="${t.url}">⧉ Link</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+render("All");
+
+filters.addEventListener('click',e=>{
+  const b=e.target.closest('.fbtn');if(!b)return;
+  document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');render(b.dataset.cat);
+});
+
+// starter-stack pills jump + highlight
+document.querySelectorAll('.pill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('active'));
+    document.querySelector('.fbtn[data-cat="All"]').classList.add('active');
+    render("All");
+    const name=p.dataset.jump;
+    requestAnimationFrame(()=>{
+      const card=document.querySelector(`.card[data-name="${name}"]`);
+      if(card){card.scrollIntoView({behavior:'smooth',block:'center'});
+        card.style.borderColor='var(--gold)';card.style.boxShadow='0 0 0 2px rgba(0,169,176,.4)';
+        setTimeout(()=>{card.style.boxShadow='';card.style.borderColor='';},1800);}
+    });
+  });
+});
+
+document.addEventListener('click',e=>{
+  const c=e.target.closest('.copy-btn');if(!c)return;
+  navigator.clipboard.writeText(c.dataset.copy).then(()=>{
+    const old=c.innerHTML;c.innerHTML='✓';c.classList.add('done');showToast(c.dataset.copy);
+    setTimeout(()=>{c.innerHTML=old;c.classList.remove('done')},1500);
+  }).catch(()=>showToast('Press ⌘/Ctrl+C'));
+});
+let toastT;
+function showToast(msg){const t=document.getElementById('toast');t.textContent='Copied: '+(msg||'')+' ✓';
+  t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),1700);}
+</script>
+</body>
+</html>
